@@ -8,7 +8,7 @@ import {
   Waves, Star, ShoppingBag, UtensilsCrossed, Compass, Shield,
   Hotel, Phone, Mail, MessageCircle, ArrowRight, ChevronRight,
   LayoutGrid, List, Search, Globe, Construction, Sparkles,
-  CheckCircle, Award, Users, Home, Key
+  CheckCircle, Award, Users, Home, Key, X
 } from 'lucide-react';
 
 // Helper to format percentage calculations for payment plans
@@ -80,10 +80,9 @@ function PropertyCard({ property, large = false, onNavigate }) {
 
 // Property Detail Page Component
 function PropertyDetailSection({ propertyId, onNavigate }) {
+  const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const p = PROPERTIES.find(x => x.id === propertyId);
   if (!p) return null;
-
-  const [inquirySubmitted, setInquirySubmitted] = useState(false);
 
   return (
     <div id="page-property" className="page active">
@@ -276,10 +275,9 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
 
 // Community Detail Page Component
 function CommunityDetailSection({ communityId, onNavigate }) {
+  const [activeFaqIdx, setActiveFaqIdx] = useState(null);
   const c = COMMUNITIES.find(x => x.id === communityId);
   if (!c) return null;
-
-  const [activeFaqIdx, setActiveFaqIdx] = useState(null);
 
   return (
     <div id="page-community" className="page active">
@@ -436,6 +434,15 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isMobileMenuOpen]);
+
   // Compute Listings Page properties based on active filters & sorting
   const getFilteredProperties = () => {
     let filtered = PROPERTIES;
@@ -524,14 +531,60 @@ function App() {
 
       {/* MOBILE DRAWER MENU */}
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`} id="mobile-menu">
-        <span className="mobile-nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>Buy</span>
-        <span className="mobile-nav-link" onClick={() => { setListingTab('Rent'); navigate('listings'); }}>Rent</span>
-        <span className="mobile-nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>Off-Plan</span>
-        <span className="mobile-nav-link" onClick={() => navigate('communities')}>Communities</span>
-        <span className="mobile-nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Services</span>
-        <span className="mobile-nav-link" onClick={() => navigate('about')}>About</span>
+        <div className="mobile-menu-header">
+          <div className="mobile-menu-logo" onClick={() => { setIsMobileMenuOpen(false); navigate('home'); }}>
+            <img
+              src="images/AKV final logo.png"
+              alt="AKV Global"
+              style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
+            />
+          </div>
+          <button
+            className="mobile-menu-close"
+            aria-label="Close menu"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="mobile-menu-body">
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); setListingTab('Buy'); navigate('listings'); }}>
+            <span>Buy</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); setListingTab('Rent'); navigate('listings'); }}>
+            <span>Rent</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); setListingTab('Off-Plan'); navigate('listings'); }}>
+            <span>Off-Plan</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('communities'); }}>
+            <span>Communities</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>
+            <span>Services</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('about'); }}>
+            <span>About</span>
+            <ChevronRight size={18} className="mobile-link-arrow" />
+          </span>
+        </div>
+
         <div className="mobile-nav-cta">
-          <a href="https://wa.me/971500000000" className="btn btn-gold">WhatsApp Us</a>
+          <a
+            href="https://wa.me/971500000000"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-gold"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            WhatsApp Us
+          </a>
         </div>
       </div>
 
