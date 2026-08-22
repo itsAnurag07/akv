@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import GlobalFooter from './Footer';
 import { COMMUNITIES } from '../data';
 import {
   ChevronRight,
@@ -438,19 +439,8 @@ export default function CommunitiesPage({ onNavigate }) {
         </div>
       )}
 
-      {/* ── MINI FOOTER ── */}
-      <footer className="ab2-footer">
-        <div className="container">
-          <div className="ab2-footer-inner">
-            <div className="ab2-footer-copy">© 2026 AKV Global Consultancy. All rights reserved. RERA Registered.</div>
-            <div className="ab2-footer-links">
-              <a href="#">Privacy Policy</a>
-              <a href="#">Terms &amp; Conditions</a>
-              <a href="#">Dubai Masterplans 2030</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* ── GLOBAL SITE FOOTER ── */}
+      <GlobalFooter navigate={onNavigate} />
     </div>
   );
 }
