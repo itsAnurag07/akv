@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { PROPERTIES, OFFPLAN, COMMUNITIES } from './data';
+import { PROPERTIES, OFFPLAN, COMMUNITIES, TESTIMONIALS } from './data';
+import AboutPage from './components/AboutPage';
+import CommunitiesPage from './components/CommunitiesPage';
 import {
   MapPin, Bed, Bath, Maximize2, Building2, TrendingUp, Anchor,
   Waves, Star, ShoppingBag, UtensilsCrossed, Compass, Shield,
   Hotel, Phone, Mail, MessageCircle, ArrowRight, ChevronRight,
   LayoutGrid, List, Search, Globe, Construction, Sparkles,
-  CheckCircle
+  CheckCircle, Award, Users, Home, Key
 } from 'lucide-react';
 
 // Helper to format percentage calculations for payment plans
@@ -494,9 +496,9 @@ function App() {
             <span className="nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>Buy</span>
             <span className="nav-link" onClick={() => { setListingTab('Rent'); navigate('listings'); }}>Rent</span>
             <span className="nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>Off-Plan</span>
-            <span className="nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.cities-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Communities</span>
+            <span className="nav-link" onClick={() => navigate('communities')}>Communities</span>
             <span className="nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Services</span>
-            <span className="nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>About</span>
+            <span className="nav-link" onClick={() => navigate('about')}>About</span>
           </div>
 
           <div className="nav-cta">
@@ -524,9 +526,9 @@ function App() {
         <span className="mobile-nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>Buy</span>
         <span className="mobile-nav-link" onClick={() => { setListingTab('Rent'); navigate('listings'); }}>Rent</span>
         <span className="mobile-nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>Off-Plan</span>
-        <span className="mobile-nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.cities-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Communities</span>
+        <span className="mobile-nav-link" onClick={() => navigate('communities')}>Communities</span>
         <span className="mobile-nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Services</span>
-        <span className="mobile-nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>About</span>
+        <span className="mobile-nav-link" onClick={() => navigate('about')}>About</span>
         <div className="mobile-nav-cta">
           <a href="https://wa.me/971500000000" className="btn btn-gold">WhatsApp Us</a>
         </div>
@@ -999,7 +1001,7 @@ function App() {
               <div className="footer-col">
                 <h4>Explore</h4>
                 <div className="footer-links">
-                  <span className="footer-link" onClick={() => navigate('community', 'downtown')}>Communities</span>
+                  <span className="footer-link" onClick={() => navigate('communities')}>Communities</span>
                   <span className="footer-link">Developers</span>
                   <span className="footer-link">Investment Guide</span>
                 </div>
@@ -1007,7 +1009,7 @@ function App() {
               <div className="footer-col">
                 <h4>Company</h4>
                 <div className="footer-links">
-                  <span className="footer-link" onClick={() => navigate('home')}>About Us</span>
+                  <span className="footer-link" onClick={() => navigate('about')}>About Us</span>
                   <span className="footer-link" onClick={() => navigate('home')}>Our Services</span>
                   <span className="footer-link" onClick={() => { navigate('home'); setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 100); }}>Contact</span>
                 </div>
@@ -1199,6 +1201,14 @@ function App() {
 
       {currentPage === 'community' && (
         <CommunityDetailSection communityId={currentCommunityId} onNavigate={navigate} />
+      )}
+
+      {currentPage === 'about' && (
+        <AboutPage onNavigate={navigate} />
+      )}
+
+      {currentPage === 'communities' && (
+        <CommunitiesPage onNavigate={navigate} />
       )}
     </>
   );
