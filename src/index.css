@@ -6032,6 +6032,111 @@ html, body {
     gap: 12px !important;
     text-align: center !important;
   }
+
+  /* 9. About Bento Grid (Screenshot 1 Fix) */
+  .about-bento-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .about-bento-card--image {
+    display: none !important;
+  }
+
+  .about-bento-card--content-stack {
+    width: 100% !important;
+  }
+
+  .about-bento-subcard {
+    padding: 24px 20px !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+  }
+
+  .about-bento-title {
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+  }
+
+  .about-bento-text {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* 10. Cities Grid (Screenshot 2 Fix - "These Cities") */
+  .cities-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: 200px !important;
+    gap: 16px !important;
+  }
+
+  .city-card {
+    height: 200px !important;
+    border-radius: 18px !important;
+  }
+
+  .city-card-name {
+    font-size: 22px !important;
+    white-space: normal !important;
+  }
+
+  .city-card-properties {
+    font-size: 12px !important;
+  }
+
+  /* 11. Property Categories Grid (Screenshot 3 Fix - "Luxury Apartments / Villas") */
+  .categories-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .category-card {
+    height: 200px !important;
+    border-radius: 18px !important;
+  }
+
+  .category-title {
+    font-size: 22px !important;
+    white-space: normal !important;
+  }
+
+  /* 12. Full-Screen Mobile Drawer Menu (Screenshot 4 Fix) */
+  .mobile-menu {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #ffffff !important;
+    z-index: 9999 !important;
+    padding: 95px 24px 40px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-nav-link {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: var(--c-dark) !important;
+    padding: 12px 0 !important;
+    width: 100% !important;
+    text-align: center !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .mobile-nav-cta {
+    margin-top: 24px !important;
+    width: 100% !important;
+  }
+
+  .mobile-nav-cta .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    height: 48px !important;
+  }
 }
 
 /* ── SMALL COMPACT MOBILE PHONES (max-width: 480px) ── */
