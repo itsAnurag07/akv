@@ -5644,3 +5644,412 @@ html, body {
     padding: 5px 10px !important;
   }
 }
+
+/* ==========================================================================
+   HOME PAGE ULTRA-RESPONSIVE & SYMMETRICAL MOBILE SYSTEM
+   ========================================================================== */
+
+/* ── TABLET RESPONSIVENESS (max-width: 992px) ── */
+@media (max-width: 992px) {
+  .hero-section, .hero {
+    padding: 120px 0 60px !important;
+    min-height: auto !important;
+  }
+  
+  .hero-form-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .hero-stats-row, .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 18px !important;
+  }
+
+  .property-grid,
+  .offplan-grid,
+  .why-grid,
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+/* ── MOBILE PHONE RESPONSIVENESS (max-width: 768px) ── */
+@media (max-width: 768px) {
+  .container, .hero-container {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  .section,
+  .section-beige,
+  .featured-section,
+  .philosophy-section,
+  .communities-home-section,
+  .offplan-home-section,
+  .why-akv-section,
+  .testimonials-section {
+    padding: 48px 0 !important;
+  }
+
+  .section-heading,
+  .section-title {
+    font-size: clamp(24px, 7vw, 32px) !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+  }
+
+  .section-sub,
+  .section-lead {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    margin-bottom: 28px !important;
+  }
+
+  /* 1. Hero Section & Search Widget */
+  .search-widget-container {
+    margin-top: 20px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .search-widget {
+    flex-direction: column !important;
+    border-radius: 24px !important;
+    padding: 16px 14px !important;
+    min-height: auto !important;
+    gap: 12px !important;
+  }
+
+  .search-widget-tabs {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .search-widget-tab {
+    flex: 1 !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    height: 40px !important;
+  }
+
+  .search-widget-fields {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .search-widget-divider {
+    display: none !important;
+  }
+
+  .search-btn-circle {
+    width: 100% !important;
+    border-radius: 14px !important;
+    height: 46px !important;
+    justify-content: center !important;
+  }
+
+  .hero-section, .hero {
+    padding: 110px 0 40px !important;
+    text-align: center !important;
+  }
+
+  .hero-badge {
+    margin: 0 auto 16px auto !important;
+    display: inline-flex !important;
+    font-size: 11px !important;
+    padding: 5px 14px !important;
+  }
+
+  .hero-title {
+    font-size: clamp(26px, 7.5vw, 36px) !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    margin-bottom: 14px !important;
+  }
+
+  .hero-subtitle, .hero-lead {
+    font-size: 14.5px !important;
+    line-height: 1.65 !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    margin: 0 auto 28px auto !important;
+  }
+
+  .hero-search-box, .hero-card {
+    padding: 18px 14px !important;
+    border-radius: 20px !important;
+  }
+
+  .hero-search-tabs {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .hero-tab {
+    padding: 8px 16px !important;
+    font-size: 12.5px !important;
+    flex: 1 !important;
+    text-align: center !important;
+  }
+
+  .hero-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .hero-form-group input,
+  .hero-form-group select {
+    height: 46px !important;
+    font-size: 13.5px !important;
+  }
+
+  .hero-search-btn, .hero-submit-btn {
+    width: 100% !important;
+    height: 48px !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    margin-top: 4px !important;
+  }
+
+  .hero-stats-row, .hero-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    margin-top: 28px !important;
+  }
+
+  .hero-stat-item {
+    text-align: center !important;
+    padding: 12px 10px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .hero-stat-val {
+    font-size: 22px !important;
+  }
+
+  .hero-stat-lbl {
+    font-size: 11px !important;
+  }
+
+  /* 2. Value Proposition / Philosophy Section */
+  .philo-grid, .value-cards {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .philo-card, .value-card {
+    text-align: center !important;
+    padding: 24px 20px !important;
+    border-radius: 18px !important;
+  }
+
+  .philo-icon {
+    margin: 0 auto 14px auto !important;
+  }
+
+  /* 3. Featured Properties Section */
+  .featured-filters {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-bottom: 28px !important;
+  }
+
+  .featured-filter-btn {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    flex: 1 1 calc(50% - 6px) !important;
+    text-align: center !important;
+  }
+
+  .property-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .property-card {
+    border-radius: 18px !important;
+  }
+
+  .property-card-img-wrap,
+  .property-card-img {
+    height: 220px !important;
+  }
+
+  .property-card-body {
+    padding: 20px 18px !important;
+  }
+
+  .property-title {
+    font-size: 20px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .property-specs {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    text-align: center !important;
+    padding: 10px 0 !important;
+  }
+
+  .property-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+  }
+
+  .property-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* 4. Off-Plan Projects Section */
+  .offplan-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .offplan-card {
+    border-radius: 18px !important;
+    padding: 20px 18px !important;
+  }
+
+  .offplan-img-wrap {
+    height: 210px !important;
+    border-radius: 14px !important;
+  }
+
+  .offplan-payment-plan {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  /* 5. Why AKV Advisory Section */
+  .why-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .why-card {
+    text-align: center !important;
+    padding: 24px 20px !important;
+  }
+
+  .why-icon {
+    margin: 0 auto 14px auto !important;
+  }
+
+  /* 6. Testimonials Section */
+  .testimonials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .testimonial-card {
+    padding: 22px 18px !important;
+    border-radius: 18px !important;
+    text-align: center !important;
+  }
+
+  .testimonial-avatar {
+    margin: 0 auto 12px auto !important;
+  }
+
+  /* 7. Final Consultation CTA Banner */
+  .final-cta-section {
+    padding: 40px 16px !important;
+  }
+
+  .final-cta-box {
+    padding: 36px 20px !important;
+    border-radius: 22px !important;
+    text-align: center !important;
+  }
+
+  .final-cta-title {
+    font-size: clamp(22px, 6.5vw, 30px) !important;
+    margin-bottom: 12px !important;
+  }
+
+  .final-cta-sub {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 28px !important;
+  }
+
+  .final-cta-actions {
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .final-cta-actions .btn,
+  .final-cta-btn-gold,
+  .final-cta-btn-white {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* 8. Global Site Footer Mobile Layout */
+  .global-site-footer {
+    padding: 50px 0 30px !important;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+    text-align: center !important;
+  }
+
+  .footer-brand {
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .footer-social {
+    justify-content: center !important;
+  }
+
+  .footer-contact-item {
+    justify-content: center !important;
+  }
+
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+}
+
+/* ── SMALL COMPACT MOBILE PHONES (max-width: 480px) ── */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 24px !important;
+  }
+
+  .hero-stats-row, .hero-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .featured-filter-btn {
+    flex: 1 1 100% !important;
+  }
+
+  .property-card-img-wrap,
+  .property-card-img {
+    height: 190px !important;
+  }
+}
