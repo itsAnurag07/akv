@@ -21,7 +21,7 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
             alt="AKV Global"
             style={{ height: '48px', width: 'auto', objectFit: 'contain', marginBottom: '20px', display: 'block' }}
           />
-          <p className="footer-tagline">Dubai's premium real estate partner — combining expertise, integrity and market knowledge since 2010.</p>
+          <p className="footer-tagline">Dubai's premium real estate partner — combining expertise, integrity and market knowledge.</p>
           <div className="footer-social">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-btn" aria-label="Instagram">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

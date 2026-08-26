@@ -706,8 +706,8 @@ function App() {
                     <div style={{ fontSize: '11px', color: 'var(--c-dark)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Sales Volume (AED)</div>
                   </div>
                   <div style={{ background: 'var(--c-beige)', padding: '24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--c-border)' }}>
-                    <div style={{ fontFamily: 'var(--ff-serif)', fontSize: '28px', color: 'var(--c-gold)', fontWeight: 600 }}>15+</div>
-                    <div style={{ fontSize: '11px', color: 'var(--c-dark)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Years in Market</div>
+                    <div style={{ fontFamily: 'var(--ff-serif)', fontSize: '28px', color: 'var(--c-gold)', fontWeight: 600 }}>500+</div>
+                    <div style={{ fontSize: '11px', color: 'var(--c-dark)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Prime Deals Handled</div>
                   </div>
                   <div style={{ background: 'var(--c-beige)', padding: '24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--c-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>

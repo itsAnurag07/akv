@@ -88,7 +88,7 @@ export default function AboutPage({ onNavigate }) {
       role: 'Co-Founder & Managing Director',
       specialty: 'Ultra-Luxury Villas & Private Estates',
       volume: 'AED 4.5B+ Closed',
-      bio: 'Over 15 years in Dubai luxury real estate. Pardeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
+      bio: 'Senior Dubai luxury real estate specialist. Pardeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
       img: 'images/Pardeep Singh.png',
     },
     {
@@ -146,7 +146,7 @@ export default function AboutPage({ onNavigate }) {
     {
       num: '',
       title: 'Knowledge Mastery',
-      desc: 'Institutional market intelligence backed by 15+ years of Dubai data, proprietary yield analytics, developer track records, and RERA legal safeguards.',
+      desc: 'Institutional market intelligence backed by comprehensive Dubai data, proprietary yield analytics, developer track records, and RERA legal safeguards.',
       icon: <Zap size={24} />
     },
     {
@@ -181,7 +181,7 @@ export default function AboutPage({ onNavigate }) {
               </h1>
 
               <p className="ab2-hero-lead">
-                Since 2010, AKV Global Consultancy has stood for <strong>Assist · Knowledge · Vision</strong> — assisting international investors, HNW families, and private offices in discovering and securing the perfect Dubai property.
+                AKV Global Consultancy stands for <strong>Assist · Knowledge · Vision</strong> — assisting international investors, HNW families, and private offices in discovering and securing the perfect Dubai property.
               </p>
 
               <div className="ab2-hero-actions">
@@ -228,9 +228,9 @@ export default function AboutPage({ onNavigate }) {
 
                 <div className="ab2-hero-stat-floating">
                   <span className="ab2-float-num">
-                    <CountUpNumber end={15} suffix="+" />
+                    <CountUpNumber end={100} suffix="%" />
                   </span>
-                  <span className="ab2-float-txt">Years of Excellence in Dubai</span>
+                  <span className="ab2-float-txt">Client Focused Excellence</span>
                 </div>
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function AboutPage({ onNavigate }) {
                 </h2>
                 <div className="ab2-quote-divider" />
                 <p className="ab2-story-body">
-                  When we established AKV Global Consultancy over fifteen years ago, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
+                  When we established AKV Global Consultancy, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
                 </p>
                 <p className="ab2-story-body">
                   Whether you are seeking an iconic beachfront villa on Palm Jumeirah, high-yielding off-plan apartments in Downtown Dubai, or structuring a multi-asset commercial portfolio, our commitment remains absolute — unyielding integrity, exclusive access, and personal stewardship.
@@ -395,7 +395,7 @@ export default function AboutPage({ onNavigate }) {
           <div className="ab2-header-center">
             <div className="label mb-12">The Minds Behind AKV</div>
             <h2 className="section-heading">Meet Our Senior Advisory Directors</h2>
-            <p className="section-sub">Seasoned real estate specialists with an average of 12+ years in Dubai market leadership</p>
+            <p className="section-sub">Seasoned real estate specialists dedicated to Dubai market leadership and client success</p>
           </div>
 
           <div className="ab2-team-grid two-columns">
