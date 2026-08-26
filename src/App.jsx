@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { PROPERTIES, OFFPLAN, COMMUNITIES, TESTIMONIALS } from './data';
 import AboutPage from './components/AboutPage';
 import CommunitiesPage from './components/CommunitiesPage';
+import WhyInvestPage from './components/WhyInvestPage';
 import GlobalFooter from './components/Footer';
 import {
   MapPin, Bed, Bath, Maximize2, Building2, TrendingUp, Anchor,
@@ -59,7 +60,6 @@ function PropertyCard({ property, large = false, onNavigate }) {
       <div className="prop-body">
         <div className="prop-header-row">
           <div className="prop-name">{p.name}</div>
-          <div className="prop-price">{p.price}</div>
         </div>
         <div className="prop-location">
           <MapPin size={12} strokeWidth={2} style={{ marginRight: '4px', flexShrink: 0, color: 'var(--c-gold)' }} />
@@ -126,10 +126,6 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               </div>
             </div>
 
-            <div className="detail-price-area">
-              <div className="detail-price">{p.price}</div>
-              <div className="detail-price-label">{p.offplan ? 'Starting Price' : 'Listed Price'}</div>
-            </div>
 
             <div className="detail-specs">
               <div className="detail-spec">
@@ -188,17 +184,14 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
                   <div className="payment-step">
                     <span className="payment-step-label">On Booking</span>
                     <span className="payment-step-pct">20%</span>
-                    <span className="payment-step-val">{formatPct(p.price, 20)}</span>
                   </div>
                   <div className="payment-step">
                     <span className="payment-step-label">During Construction</span>
                     <span className="payment-step-pct">40%</span>
-                    <span className="payment-step-val">{formatPct(p.price, 40)}</span>
                   </div>
                   <div className="payment-step">
                     <span className="payment-step-label">On Handover</span>
                     <span className="payment-step-pct">40%</span>
-                    <span className="payment-step-val">{formatPct(p.price, 40)}</span>
                   </div>
                   <div className="payment-step">
                     <span className="payment-step-label">Completion</span>
@@ -209,8 +202,8 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
             )}
             <div className="agent-card">
               <div className="label" style={{ marginBottom: '16px' }}>Your Advisor</div>
-              <h3>Ahmed Al Mansouri</h3>
-              <div className="agent-title">Senior Property Consultant · AKV Global</div>
+              <h3>Pardeep Singh</h3>
+              <div className="agent-title">Co-Founder &amp; Managing Director · AKV Global</div>
               <div className="agent-actions">
                 <a href="https://wa.me/971500000000" className="btn btn-gold" style={{ justifyContent: 'center', width: '100%' }}>
                   <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '16px', height: '16px', marginRight: '8px' }}>
@@ -501,12 +494,12 @@ function App() {
           </div>
 
           <div className="nav-links">
-            <span className="nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>Buy</span>
-            <span className="nav-link" onClick={() => { setListingTab('Rent'); navigate('listings'); }}>Rent</span>
-            <span className="nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>Off-Plan</span>
-            <span className="nav-link" onClick={() => navigate('communities')}>Communities</span>
-            <span className="nav-link" onClick={() => { navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Services</span>
-            <span className="nav-link" onClick={() => navigate('about')}>About</span>
+            <span className="nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>BUY</span>
+
+            <span className="nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>OFF-PLAN</span>
+            <span className="nav-link" onClick={() => navigate('communities')}>COMMUNITES</span>
+            <span className="nav-link" onClick={() => navigate('why-invest')}>WHY INVEST IN DUBAI</span>
+            <span className="nav-link" onClick={() => navigate('about')}>ABOUT</span>
           </div>
 
           <div className="nav-cta">
@@ -565,8 +558,8 @@ function App() {
             <span>Communities</span>
             <ChevronRight size={18} className="mobile-link-arrow" />
           </span>
-          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('home'); setTimeout(() => { document.querySelector('.about-bento-grid')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>
-            <span>Services</span>
+          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('why-invest'); }}>
+            <span>Why Invest in Dubai</span>
             <ChevronRight size={18} className="mobile-link-arrow" />
           </span>
           <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); navigate('about'); }}>
@@ -896,7 +889,6 @@ function App() {
                     <div className="prop-body">
                       <div className="prop-header-row">
                         <div className="prop-name">{p.name}</div>
-                        <div className="prop-price">{p.price}</div>
                       </div>
                       <div className="prop-location" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <MapPin size={12} strokeWidth={2} style={{ color: 'var(--c-gold)', flexShrink: 0 }} />
@@ -1182,6 +1174,10 @@ function App() {
 
       {currentPage === 'communities' && (
         <CommunitiesPage onNavigate={navigate} />
+      )}
+
+      {currentPage === 'why-invest' && (
+        <WhyInvestPage onNavigate={navigate} />
       )}
     </>
   );

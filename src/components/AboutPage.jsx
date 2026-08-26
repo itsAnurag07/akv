@@ -84,28 +84,20 @@ export default function AboutPage({ onNavigate }) {
 
   const team = [
     {
-      name: 'Ahmed Al Mansouri',
-      role: 'Founder & Managing Director',
+      name: 'Pardeep Singh',
+      role: 'Co-Founder & Managing Director',
       specialty: 'Ultra-Luxury Villas & Private Estates',
       volume: 'AED 4.5B+ Closed',
-      bio: 'Over 15 years in Dubai luxury real estate. Ahmed built AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
-      img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80',
+      bio: 'Over 15 years in Dubai luxury real estate. Pardeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
+      img: 'images/Pardeep Singh.png',
     },
     {
-      name: 'Sarah Mitchell',
-      role: 'Head of Off-Plan Advisory',
+      name: 'Habib Khan',
+      role: 'Co-Founder & Managing Director',
       specialty: 'Pre-Launch Penthouse & Developer Allocations',
       volume: 'AED 3.2B+ Closed',
-      bio: 'Former senior advisor for tier-1 Dubai developers. Sarah maintains direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
-      img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      name: 'Khalid Al-Rashidi',
-      role: 'Senior Private Wealth Consultant',
-      specialty: 'Yield Optimization & Commercial Portfolios',
-      volume: 'AED 2.8B+ Closed',
-      bio: 'Trusted wealth advisor for GCC families and international private equity funds seeking tax-efficient, high-yielding UAE property assets.',
-      img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80',
+      bio: 'Former senior advisor for tier-1 Dubai developers. Habib co-founded AKV to maintain direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
+      img: 'images/Habib Khan.jpeg',
     },
   ];
 
@@ -286,13 +278,13 @@ export default function AboutPage({ onNavigate }) {
               <div className="ab2-vision-image-col">
                 <div className="ab2-founder-portrait-wrap">
                   <img
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80"
-                    alt="Ahmed Al Mansouri Founder"
+                    src="images/Pardeep Singh.png"
+                    alt="Pardeep Singh Co-Founder"
                     className="ab2-founder-img"
                   />
                   <div className="ab2-founder-badge">
-                    <div className="ab2-founder-name">Ahmed Al Mansouri</div>
-                    <div className="ab2-founder-role">Founder &amp; Managing Director</div>
+                    <div className="ab2-founder-name">Pardeep Singh</div>
+                    <div className="ab2-founder-role">Co-Founders &amp; Managing Directors</div>
                   </div>
                 </div>
               </div>
@@ -304,15 +296,15 @@ export default function AboutPage({ onNavigate }) {
                 </h2>
                 <div className="ab2-quote-divider" />
                 <p className="ab2-story-body">
-                  When I established AKV Global Consultancy over fifteen years ago, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
+                  When we established AKV Global Consultancy over fifteen years ago, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
                 </p>
                 <p className="ab2-story-body">
                   Whether you are seeking an iconic beachfront villa on Palm Jumeirah, high-yielding off-plan apartments in Downtown Dubai, or structuring a multi-asset commercial portfolio, our commitment remains absolute — unyielding integrity, exclusive access, and personal stewardship.
                 </p>
 
                 <div className="ab2-signature-row">
-                  <div className="ab2-sig-text">Ahmed Al Mansouri</div>
-                  <div className="ab2-sig-tag">RERA Certified Broker #14892</div>
+                  <div className="ab2-sig-text">Pardeep Singh</div>
+                  <div className="ab2-sig-tag">Co-Founders, AKV Global</div>
                 </div>
               </div>
             </div>
@@ -406,7 +398,7 @@ export default function AboutPage({ onNavigate }) {
             <p className="section-sub">Seasoned real estate specialists with an average of 12+ years in Dubai market leadership</p>
           </div>
 
-          <div className="ab2-team-grid">
+          <div className="ab2-team-grid two-columns">
             {team.map((member, idx) => (
               <div key={idx} className="ab2-team-card">
                 <div className="ab2-team-img-wrap">

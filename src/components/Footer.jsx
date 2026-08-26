@@ -66,7 +66,7 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
           <div className="footer-links">
             <span className="footer-link" onClick={() => handleNav('communities')}>Communities</span>
             <span className="footer-link" onClick={() => handleNav('about')}>About Us</span>
-            <span className="footer-link" onClick={() => handleNav('home')}>Investment Guide</span>
+            <span className="footer-link" onClick={() => handleNav('why-invest')}>Investment Guide</span>
           </div>
         </div>
 
