@@ -588,7 +588,7 @@ function App() {
           <section id="hero">
             <div className="hero-video-bg">
               <video autoPlay loop muted playsInline preload="auto" poster="/images/hero.png">
-                <source src="/video/akv_global.mp4" type="video/mp4" />
+                <source src="https://akv.intelloft.in/wp-content/uploads/2026/08/AKV-Global-Consultant.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               <div className="hero-video-overlay"></div>
