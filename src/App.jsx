@@ -802,7 +802,7 @@ function App() {
             <div className="container">
               <div style={{ textAlign: 'center', marginBottom: '48px' }}>
                 <div className="label">Our Location</div>
-                <h2 className="section-heading" style={{ marginTop: '12px' }}>Find Your Properties In These Cities</h2>
+                <h2 className="section-heading" style={{ marginTop: '12px' }}>Find Your Properties In UAE</h2>
               </div>
 
               <div className="cities-grid">
@@ -887,14 +887,6 @@ function App() {
                       <div className="prop-location" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <MapPin size={12} strokeWidth={2} style={{ color: 'var(--c-gold)', flexShrink: 0 }} />
                         {p.location}
-                      </div>
-                      <div className="prop-footer">
-                        <div className="prop-listing-type">{p.id === 'op2' ? 'Promote Listing' : 'Premium Listing'}</div>
-                        <div className="prop-specs-row">
-                          <span className="prop-spec-mini"><Bed size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.beds} Beds</span>
-                          <span className="prop-spec-mini"><Bath size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.baths} Baths</span>
-                          <span className="prop-spec-mini"><Maximize2 size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.area} sqft</span>
-                        </div>
                       </div>
                     </div>
                   </div>
