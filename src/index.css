@@ -7550,8 +7550,8 @@ html, body {
 
 /* ── SEARCH WIDGET RESPONSIVE STYLES ── */
 .search-widget-container {
-  margin-top: -55px;
-  margin-bottom: 50px;
+  margin-top: -36px;
+  margin-bottom: 40px;
   padding: 0 20px;
   position: relative;
   z-index: 20;
@@ -7699,9 +7699,13 @@ html, body {
 }
 
 @media (max-width: 992px) {
+  .hero-content-overlay {
+    padding-bottom: 140px !important;
+  }
+
   .search-widget-container {
-    margin-top: -30px !important;
-    margin-bottom: 30px !important;
+    margin-top: -145px !important;
+    margin-bottom: 40px !important;
     padding: 0 16px !important;
   }
 
@@ -7714,7 +7718,7 @@ html, body {
     height: auto !important;
     min-height: auto !important;
     background: #ffffff !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
   }
 
   .search-widget-tabs {
@@ -7775,6 +7779,6 @@ html, body {
   }
 
   .overview-container {
-    padding-top: 30px !important;
+    padding-top: 24px !important;
   }
 }
