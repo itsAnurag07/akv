@@ -711,6 +711,13 @@ function App() {
                     </div>
                     <Sparkles size={24} strokeWidth={1.4} style={{ opacity: 0.7, color: 'var(--c-gold)' }} />
                   </div>
+                  <div style={{ background: 'var(--c-dark)', padding: '24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--c-gold)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--ff-serif)', fontSize: '24px', color: 'var(--c-gold)', fontWeight: 600 }}>100%</div>
+                      <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>RERA Certified Advisory</div>
+                    </div>
+                    <Award size={24} strokeWidth={1.4} style={{ color: 'var(--c-gold)' }} />
+                  </div>
                 </div>
               </div>
 
