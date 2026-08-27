@@ -1,5 +1,5 @@
 // ============================================================
-// AKV GLOBAL CONSULTANCY — Property & Community Data
+// AKV GLOBAL CONSULTANT — Property & Community Data
 // ============================================================
 
 export const PROPERTIES = [

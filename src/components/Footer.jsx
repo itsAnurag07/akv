@@ -106,7 +106,7 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
       </div>
 
       <div className="footer-bottom">
-        <div className="footer-copy">© 2026 AKV Global Consultancy. All rights reserved.</div>
+        <div className="footer-copy">© 2026 AKV Global Consultant. All rights reserved.</div>
         <div className="footer-legal">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms &amp; Conditions</a>

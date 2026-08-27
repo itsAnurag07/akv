@@ -174,7 +174,7 @@ export default function AboutPage({ onNavigate }) {
             <div className="ab2-hero-content">
               <div className="ab2-badge">
                 <Sparkles size={14} className="ab2-badge-icon" />
-                <span>AKV — Assist · Knowledge · Vision Consultancy</span>
+                <span>AKV — Assist · Knowledge · Vision Consultant</span>
               </div>
 
               <h1 className="ab2-hero-heading">
@@ -182,7 +182,7 @@ export default function AboutPage({ onNavigate }) {
               </h1>
 
               <p className="ab2-hero-lead">
-                AKV Global Consultancy stands for <strong>Assist · Knowledge · Vision</strong> — assisting international investors, HNW families, and private offices in discovering and securing the perfect Dubai property.
+                AKV Global Consultant stands for <strong>Assist · Knowledge · Vision</strong> — assisting international investors, HNW families, and private offices in discovering and securing the perfect Dubai property.
               </p>
 
               <div className="ab2-hero-actions">
@@ -297,7 +297,7 @@ export default function AboutPage({ onNavigate }) {
                 </h2>
                 <div className="ab2-quote-divider" />
                 <p className="ab2-story-body">
-                  When we established AKV Global Consultancy, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
+                  When we established AKV Global Consultant, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
                 </p>
                 <p className="ab2-story-body">
                   Whether you are seeking an iconic beachfront villa on Palm Jumeirah, high-yielding off-plan apartments in Downtown Dubai, or structuring a multi-asset commercial portfolio, our commitment remains absolute — unyielding integrity, exclusive access, and personal stewardship.

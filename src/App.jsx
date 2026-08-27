@@ -499,7 +499,7 @@ function App() {
       {/* NAVBAR */}
       <nav id="navbar" className={`${isScrolled ? 'scrolled' : ''} ${currentPage !== 'home' ? 'nav-light' : ''}`}>
         <div className="nav-inner">
-          <div className="nav-logo" aria-label="AKV Global Consultancy Home" onClick={() => navigate('home')}>
+          <div className="nav-logo" aria-label="AKV Global Consultant Home" onClick={() => navigate('home')}>
             <img
               src="images/AKV final logo.png"
               alt="AKV Global"
@@ -692,7 +692,7 @@ function App() {
                   <div className="label">Overview</div>
                   <h3 className="section-heading" style={{ marginTop: '12px', fontSize: '32px', lineHeight: 1.3 }}>Dubai Real Estate,<br />Redefined.</h3>
                   <p style={{ color: 'var(--c-muted)', marginTop: '20px', fontSize: '16px', lineHeight: 1.75, fontWeight: 300 }}>
-                    AKV Global Consultancy is a premier boutique real estate agency in Dubai. We specialize in curating ultra-luxury villas, sky-penthouses, and high-yielding off-plan developments in the city's most prestigious communities.
+                    AKV Global Consultant is a premier boutique real estate agency in Dubai. We specialize in curating ultra-luxury villas, sky-penthouses, and high-yielding off-plan developments in the city's most prestigious communities.
                   </p>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -1145,7 +1145,7 @@ function App() {
 
           <footer>
             <div className="footer-bottom" style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 40px' }}>
-              <div className="footer-copy">© 2025 AKV Global Consultancy. All rights reserved.</div>
+              <div className="footer-copy">© 2026 AKV Global Consultant. All rights reserved.</div>
               <div className="footer-legal">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms &amp; Conditions</a>
