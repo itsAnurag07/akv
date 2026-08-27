@@ -65,14 +65,6 @@ function PropertyCard({ property, large = false, onNavigate }) {
           <MapPin size={12} strokeWidth={2} style={{ marginRight: '4px', flexShrink: 0, color: 'var(--c-gold)' }} />
           {p.location}
         </div>
-        <div className="prop-footer">
-          <div className="prop-listing-type">{p.id % 2 === 0 ? 'Promote Listing' : 'Premium Listing'}</div>
-          <div className="prop-specs-row">
-            <span className="prop-spec-mini"><Bed size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.beds} Beds</span>
-            <span className="prop-spec-mini"><Bath size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.baths} Baths</span>
-            <span className="prop-spec-mini"><Maximize2 size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.area} sqft</span>
-          </div>
-        </div>
       </div>
     </div>
   );
