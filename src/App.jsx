@@ -854,14 +854,6 @@ function App() {
                     <div className="city-card-properties">72 Properties</div>
                   </div>
                 </div>
-
-                <div className="city-card" onClick={() => navigate('community', 'dubai-south')}>
-                  <img src="images/offplan.png" alt="Dubai South" />
-                  <div className="city-card-overlay">
-                    <div className="city-card-name">Dubai South</div>
-                    <div className="city-card-properties">120 Properties</div>
-                  </div>
-                </div>
               </div>
             </div>
           </section>
