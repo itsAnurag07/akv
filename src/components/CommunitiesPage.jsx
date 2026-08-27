@@ -149,6 +149,20 @@ const EXPANDED_COMMUNITIES = [
       { title: 'Equestrian Center', desc: 'Polo fields and riding trails' },
       { title: 'Family Amenities', desc: 'Parks, pools, tennis courts & retail center' }
     ]
+  },
+  {
+    id: 'dubai-south',
+    name: 'Dubai South',
+    tagline: 'The Future Hub of Global Aviation & Mega Infrastructure',
+    desc: 'Home to the AED 128B Al Maktoum International Airport expansion, Expo City Dubai, and green master-planned mega communities with premier capital growth potential.',
+    img: 'images/offplan.png',
+    stats: { avgPrice: 'AED 1.4M', roi: '7.5%', props: '1,800+', type: 'Modern Villas & Smart Apartments' },
+    lifestyle: 'Futuristic, connected urban living centered around innovation hubs, green parks, and seamless transit links.',
+    highlights: [
+      { title: 'Al Maktoum Mega Airport', desc: 'World\'s largest 5-runway airport expansion project' },
+      { title: 'Expo City Dubai Legacy', desc: 'Global business, sustainability & tech innovation hub' },
+      { title: '7.5% High Growth Yield', desc: 'Rapid capital appreciation & top off-plan demand' }
+    ]
   }
 ];
 
@@ -165,13 +179,14 @@ export default function CommunitiesPage({ onNavigate }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const categories = ['All', 'Waterfront & Beach', 'Downtown & Urban', 'Golf & Family Estates'];
+  const categories = ['All', 'Waterfront & Beach', 'Downtown & Urban', 'Golf & Family Estates', 'Aviation & Growth Hubs'];
 
   const filteredCommunities = EXPANDED_COMMUNITIES.filter(c => {
     if (activeCategory === 'All') return true;
     if (activeCategory === 'Waterfront & Beach') return ['palm', 'marina'].includes(c.id);
     if (activeCategory === 'Downtown & Urban') return ['downtown', 'business-bay'].includes(c.id);
     if (activeCategory === 'Golf & Family Estates') return ['dubai-hills', 'arabian-ranches'].includes(c.id);
+    if (activeCategory === 'Aviation & Growth Hubs') return ['dubai-south'].includes(c.id);
     return true;
   });
 
@@ -335,7 +350,7 @@ export default function CommunitiesPage({ onNavigate }) {
             </p>
             <div className="comm3-spotlight-actions">
               <a
-                href="https://wa.me/971500000000"
+                href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20speak%20to%20a%20Masterplan%20Advisor."
                 className="btn btn-gold btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"

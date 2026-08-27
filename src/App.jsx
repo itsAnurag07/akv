@@ -201,19 +201,33 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               </div>
             )}
             <div className="agent-card">
-              <div className="label" style={{ marginBottom: '16px' }}>Your Advisor</div>
-              <h3>Pardeep Singh</h3>
-              <div className="agent-title">Co-Founder &amp; Managing Director · AKV Global</div>
+              <div className="label" style={{ marginBottom: '16px' }}>Your Advisory Leadership</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)' }}>
+                  <img src="images/Paramdeep_new.png" alt="Paramdeep Singh" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '13px', color: '#fff' }}>Paramdeep Singh</h4>
+                    <div style={{ fontSize: '10px', color: 'var(--c-gold)', marginTop: '2px' }}>Co-Founder &amp; MD</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)' }}>
+                  <img src="images/Habib Khan.jpeg" alt="Habib Khan" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '13px', color: '#fff' }}>Habib Khan</h4>
+                    <div style={{ fontSize: '10px', color: 'var(--c-gold)', marginTop: '2px' }}>Operational &amp; Sales Head</div>
+                  </div>
+                </div>
+              </div>
               <div className="agent-actions">
-                <a href="https://wa.me/971500000000" className="btn btn-gold" style={{ justifyContent: 'center', width: '100%' }}>
+                <a href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20this%20property." target="_blank" rel="noopener noreferrer" className="btn btn-gold" style={{ justifyContent: 'center', width: '100%' }}>
                   <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '16px', height: '16px', marginRight: '8px' }}>
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
-                  WhatsApp
+                  WhatsApp Advisory
                 </a>
-                <a href="tel:+9714400000" className="btn btn-outline" style={{ justifyContent: 'center', width: '100%' }}>
+                <a href="tel:+917009066676" className="btn btn-outline" style={{ justifyContent: 'center', width: '100%' }}>
                   <Phone size={15} strokeWidth={2} style={{ marginRight: '6px' }} />
-                  Call Agent
+                  Call Direct
                 </a>
               </div>
               <div className="inquiry-form">
@@ -367,7 +381,7 @@ function CommunityDetailSection({ communityId, onNavigate }) {
             <p className="final-cta-sub">Our advisors specialise in {c.name} properties. Speak with us today to explore your options.</p>
             <div className="final-cta-btns">
               <button className="btn btn-gold" onClick={() => onNavigate('listings')}>View Properties</button>
-              <a href="https://wa.me/971500000000" className="btn btn-outline-light">WhatsApp Us</a>
+              <a href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20community%20properties." target="_blank" rel="noopener noreferrer" className="btn btn-outline-light">WhatsApp Us</a>
             </div>
           </div>
         </div>
@@ -570,7 +584,7 @@ function App() {
 
         <div className="mobile-nav-cta">
           <a
-            href="https://wa.me/971500000000"
+            href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry."
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-gold"
@@ -597,69 +611,50 @@ function App() {
 
           {/* FEATURED PROPERTIES */}
           <section className="section section--white" style={{ paddingTop: 0, position: 'relative' }}>
-            <div className="search-widget-container" style={{ marginTop: '-55px', marginBottom: '50px' }}>
-              <div className="search-widget"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.85)',
-                  backdropFilter: 'blur(15px)',
-                  WebkitBackdropFilter: 'blur(15px)',
-                  border: '1px solid rgba(197, 168, 128, 0.25)',
-                  borderRadius: '50px',
-                  padding: '14px 28px',
-                  boxShadow: '0 15px 35px rgba(27, 34, 41, 0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '20px',
-                  width: '100%',
-                  minHeight: '76px'
-                }}
-              >
+            <div className="search-widget-container">
+              <div className="search-widget">
 
                 {/* Tabs inside capsule */}
-                <div className="search-widget-tabs" style={{ display: 'flex', gap: '6px', marginBottom: 0, background: 'rgba(0,0,0,0.04)', borderRadius: '50px', padding: '6px', flexShrink: 0, alignItems: 'center' }}>
-                  <button className={`search-widget-tab ${heroTab === 'Buy' ? 'active' : ''}`} onClick={() => setHeroTab('Buy')} style={{ borderRadius: '50px', padding: '10px 28px', fontSize: '14px', border: 'none', height: '46px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>Buy</button>
-                  <button className={`search-widget-tab ${heroTab === 'Rent' ? 'active' : ''}`} onClick={() => setHeroTab('Rent')} style={{ borderRadius: '50px', padding: '10px 28px', fontSize: '14px', border: 'none', height: '46px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>Rent</button>
-                  <button className={`search-widget-tab ${heroTab === 'Off-Plan' ? 'active' : ''}`} onClick={() => setHeroTab('Off-Plan')} style={{ borderRadius: '50px', padding: '10px 28px', fontSize: '14px', border: 'none', height: '46px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>Off Plan</button>
+                <div className="search-widget-tabs">
+                  <button className={`search-widget-tab ${heroTab === 'Buy' ? 'active' : ''}`} onClick={() => setHeroTab('Buy')}>Buy</button>
+                  <button className={`search-widget-tab ${heroTab === 'Rent' ? 'active' : ''}`} onClick={() => setHeroTab('Rent')}>Rent</button>
+                  <button className={`search-widget-tab ${heroTab === 'Off-Plan' ? 'active' : ''}`} onClick={() => setHeroTab('Off-Plan')}>Off Plan</button>
                 </div>
 
                 {/* Divider */}
-                <div style={{ width: '1px', height: '52px', background: 'rgba(0, 0, 0, 0.08)', flexShrink: 0 }}></div>
+                <div className="search-widget-divider"></div>
 
                 {/* Location Input */}
-                <div style={{ flex: 1.8, display: 'flex', alignItems: 'center', paddingLeft: '8px' }}>
+                <div className="search-widget-field search-location-field">
                   <input
                     type="text"
                     placeholder="Enter Location"
                     value={heroLocation}
                     onChange={(e) => setHeroLocation(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', fontSize: '16px', color: 'var(--c-dark)', width: '100%', outline: 'none', fontFamily: 'var(--ff-sans)' }}
                   />
                 </div>
 
                 {/* Divider */}
-                <div style={{ width: '1px', height: '52px', background: 'rgba(0, 0, 0, 0.08)', flexShrink: 0 }}></div>
+                <div className="search-widget-divider"></div>
 
                 {/* Completion Status Dropdown */}
-                <div style={{ flex: 1.2, display: 'flex', alignItems: 'center', position: 'relative' }}>
+                <div className="search-widget-field search-select-field">
                   <select
                     value={heroType}
                     onChange={(e) => setHeroType(e.target.value)}
-                    style={{ background: 'transparent', border: '1px solid rgba(0, 0, 0, 0.08)', borderRadius: '50px', fontSize: '14px', color: 'var(--c-muted)', width: '100%', height: '52px', padding: '0 32px 0 16px', outline: 'none', cursor: 'pointer', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none', fontFamily: 'var(--ff-sans)' }}
                   >
                     <option value="">Completion Status</option>
                     <option value="Ready">Ready</option>
                     <option value="Off-Plan">Off-Plan</option>
                   </select>
-                  <span style={{ position: 'absolute', right: '14px', pointerEvents: 'none', color: '#a0aec0', fontSize: '9px' }}>▼</span>
+                  <span className="search-select-arrow">▼</span>
                 </div>
 
                 {/* Filter Dropdown */}
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', position: 'relative' }}>
+                <div className="search-widget-field search-select-field">
                   <select
                     value={heroBeds}
                     onChange={(e) => setHeroBeds(e.target.value)}
-                    style={{ background: 'transparent', border: '1px solid rgba(0, 0, 0, 0.08)', borderRadius: '50px', fontSize: '14px', color: 'var(--c-muted)', width: '100%', height: '52px', padding: '0 32px 0 16px', outline: 'none', cursor: 'pointer', WebkitAppearance: 'none', MozAppearance: 'none', appearance: 'none', fontFamily: 'var(--ff-sans)' }}
                   >
                     <option value="">Filter</option>
                     <option value="1">1+ Beds</option>
@@ -667,7 +662,7 @@ function App() {
                     <option value="3">3+ Beds</option>
                     <option value="4">4+ Beds</option>
                   </select>
-                  <span style={{ position: 'absolute', right: '14px', pointerEvents: 'none', color: '#a0aec0', fontSize: '9px' }}>▼</span>
+                  <span className="search-select-arrow">▼</span>
                 </div>
 
                 {/* Search Button */}
@@ -680,17 +675,17 @@ function App() {
                     navigate('listings');
                   }}
                   className="search-widget-btn"
-                  style={{ background: 'var(--c-gold)', color: '#ffffff', border: 'none', borderRadius: '50%', width: '56px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.3s', flexShrink: 0, padding: 0, boxShadow: 'none' }}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
+                  <span className="search-btn-text">Search Properties</span>
                 </button>
               </div>
             </div>
 
-            <div className="container" style={{ paddingTop: '60px' }}>
+            <div className="container overview-container">
               {/* Overview Section */}
               <div className="overview-row">
                 <div>
@@ -859,6 +854,14 @@ function App() {
                     <div className="city-card-properties">72 Properties</div>
                   </div>
                 </div>
+
+                <div className="city-card" onClick={() => navigate('community', 'dubai-south')}>
+                  <img src="images/offplan.png" alt="Dubai South" />
+                  <div className="city-card-overlay">
+                    <div className="city-card-name">Dubai South</div>
+                    <div className="city-card-properties">120 Properties</div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -943,7 +946,7 @@ function App() {
                 <div className="label label--light" style={{ marginBottom: '20px' }}>Portfolio Growth</div>
                 <h2 className="investment-title">Build Your Dubai<br />Property <em>Portfolio.</em></h2>
                 <p className="investment-text">Dubai's real estate market continues to outperform global benchmarks, driven by population growth, infrastructure investment, and strong international demand. Now is the time to build a strategic position.</p>
-                <a href="https://wa.me/971500000000" className="btn btn-gold" target="_blank" rel="noopener noreferrer">Speak to an Investment Advisor</a>
+                <a href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20speak%20to%20an%20Investment%20Advisor." className="btn btn-gold" target="_blank" rel="noopener noreferrer">Speak to an Investment Advisor</a>
               </div>
               <div className="investment-points">
                 <div className="investment-point">
@@ -1179,6 +1182,20 @@ function App() {
       {currentPage === 'why-invest' && (
         <WhyInvestPage onNavigate={navigate} />
       )}
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20Dubai%20Properties."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-whatsapp-btn"
+        title="Chat on WhatsApp (+91 7009066676)"
+        aria-label="Chat on WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" width="30" height="30">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+      </a>
     </>
   );
 }

@@ -86,7 +86,7 @@ export default function WhyInvestPage({ onNavigate }) {
               </p>
               <div className="why-hero-btns">
                 <a
-                  href="https://wa.me/971500000000"
+                  href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20book%20a%20free%20strategy%20call."
                   className="btn btn-gold btn-lg"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -150,7 +150,7 @@ export default function WhyInvestPage({ onNavigate }) {
                     </div>
                     <div className="comp-col-body">
                       <div className="comp-item">
-                        <span className="item-lbl">Investment (800 sq. ft.)</span>
+                        <span className="item-lbl">Investment (400 - 500 sq. ft.)</span>
                         <span className="item-val val-success">₹ 2.00 Cr</span>
                       </div>
                       <div className="comp-item">
@@ -274,6 +274,10 @@ export default function WhyInvestPage({ onNavigate }) {
                   <li>
                     <span className="visa-check">✓</span>
                     <span className="visa-text">Right to live, work, and study in UAE</span>
+                  </li>
+                  <li>
+                    <span className="visa-check">✓</span>
+                    <span className="visa-text">Complete global mobility — Travel anywhere worldwide with unrestricted multi-entry freedom</span>
                   </li>
                 </ul>
               </div>
@@ -507,7 +511,7 @@ export default function WhyInvestPage({ onNavigate }) {
               </p>
               <div className="cta-actions">
                 <a
-                  href="https://wa.me/971500000000"
+                  href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20Dubai%20investments."
                   className="btn btn-gold btn-lg"
                   target="_blank"
                   rel="noopener noreferrer"

@@ -84,20 +84,21 @@ export default function AboutPage({ onNavigate }) {
 
   const team = [
     {
-      name: 'Pardeep Singh',
+      name: 'Paramdeep Singh',
       role: 'Co-Founder & Managing Director',
       specialty: 'Ultra-Luxury Villas & Private Estates',
-      volume: 'AED 4.5B+ Closed',
-      bio: 'Senior Dubai luxury real estate specialist. Pardeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
-      img: 'images/Pardeep Singh.png',
+      bio: 'Senior Dubai luxury real estate specialist. Paramdeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
+      img: 'images/Paramdeep_new.png',
+      link: 'https://www.linkedin.com/in/paramdeep-singh-0b3603428?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
     },
     {
       name: 'Habib Khan',
-      role: 'Co-Founder & Managing Director',
+      role: 'Operational & Sales Head',
       specialty: 'Pre-Launch Penthouse & Developer Allocations',
       volume: 'AED 3.2B+ Closed',
-      bio: 'Former senior advisor for tier-1 Dubai developers. Habib co-founded AKV to maintain direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
+      bio: 'Former senior advisor for tier-1 Dubai developers. Habib leads operations and sales at AKV to maintain direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
       img: 'images/Habib Khan.jpeg',
+      link: 'https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20connect%20with%20Habib%20Khan.',
     },
   ];
 
@@ -189,7 +190,7 @@ export default function AboutPage({ onNavigate }) {
                   <span>Explore Portfolio</span>
                   <ArrowRight size={18} />
                 </button>
-                <a href="https://wa.me/971500000000" className="btn btn-outline-dark btn-lg" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20book%20a%20private%20advisory%20consultation." className="btn btn-outline-dark btn-lg" target="_blank" rel="noopener noreferrer">
                   <PhoneCall size={18} />
                   <span>Book Private Advisory</span>
                 </a>
@@ -278,13 +279,13 @@ export default function AboutPage({ onNavigate }) {
               <div className="ab2-vision-image-col">
                 <div className="ab2-founder-portrait-wrap">
                   <img
-                    src="images/Pardeep Singh.png"
-                    alt="Pardeep Singh Co-Founder"
+                    src="images/Paramdeep_new.png"
+                    alt="Paramdeep Singh Co-Founder"
                     className="ab2-founder-img"
                   />
                   <div className="ab2-founder-badge">
-                    <div className="ab2-founder-name">Pardeep Singh</div>
-                    <div className="ab2-founder-role">Co-Founders &amp; Managing Directors</div>
+                    <div className="ab2-founder-name">Paramdeep Singh</div>
+                    <div className="ab2-founder-role">Co-Founder &amp; Managing Director</div>
                   </div>
                 </div>
               </div>
@@ -303,8 +304,8 @@ export default function AboutPage({ onNavigate }) {
                 </p>
 
                 <div className="ab2-signature-row">
-                  <div className="ab2-sig-text">Pardeep Singh</div>
-                  <div className="ab2-sig-tag">Co-Founders, AKV Global</div>
+                  <div className="ab2-sig-text">Paramdeep Singh</div>
+                  <div className="ab2-sig-tag">Co-Founder &amp; Managing Director, AKV Global</div>
                 </div>
               </div>
             </div>
@@ -394,7 +395,7 @@ export default function AboutPage({ onNavigate }) {
         <div className="container">
           <div className="ab2-header-center">
             <div className="label mb-12">The Minds Behind AKV</div>
-            <h2 className="section-heading">Meet Our Senior Advisory Directors</h2>
+            <h2 className="section-heading">Meet Our Leadership Team</h2>
             <p className="section-sub">Seasoned real estate specialists dedicated to Dubai market leadership and client success</p>
           </div>
 
@@ -415,7 +416,7 @@ export default function AboutPage({ onNavigate }) {
                   <p className="ab2-team-bio">{member.bio}</p>
 
                   <a
-                    href="https://wa.me/971500000000"
+                    href={member.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-outline-dark btn-sm w-full"
@@ -471,7 +472,7 @@ export default function AboutPage({ onNavigate }) {
               <div className="label label--gold mb-12">Start Your Dubai Property Mandate</div>
               <h2 className="ab2-cta-title">Ready to Find Your Premier Dubai Residence or Investment Asset?</h2>
               <p className="ab2-cta-sub">
-                Connect directly with a Senior Managing Director today for a private, zero-obligation consultation and custom market proposal.
+                Connect directly with our leadership team today for a private, zero-obligation consultation and custom market proposal.
               </p>
             </div>
             <div className="ab2-cta-actions">
@@ -479,7 +480,7 @@ export default function AboutPage({ onNavigate }) {
                 Browse Luxury Listings
               </button>
               <a
-                href="https://wa.me/971500000000"
+                href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20speak%20with%20a%20Senior%20Advisor."
                 className="btn btn-outline-light btn-lg"
                 target="_blank"
                 rel="noopener noreferrer"

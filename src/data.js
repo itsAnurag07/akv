@@ -337,6 +337,26 @@ export const COMMUNITIES = [
       { q: 'Is Palm Jumeirah a good long-term investment?', a: 'Yes. Its unique geography ensures supply limitations, sustained demand, and consistent capital appreciation.' },
     ],
   },
+  {
+    id: 'dubai-south',
+    name: 'Dubai South',
+    tagline: 'The Future Hub of Global Aviation & Mega Infrastructure',
+    desc: 'Home to the AED 128B Al Maktoum International Airport expansion, Expo City Dubai, and green master-planned mega communities with premier capital growth potential.',
+    img: 'images/offplan.png',
+    stats: { avgPrice: 'AED 1.4M', roi: '7.5%', props: '1,800+', type: 'Modern Villas & Smart Apartments' },
+    lifestyle: 'Futuristic, connected urban living centered around innovation hubs, green parks, and seamless transit links.',
+    highlights: [
+      { icon: 'plane', title: 'Al Maktoum Airport', desc: 'World\'s largest mega-airport expansion ($35B project)' },
+      { icon: 'building', title: 'Expo City Dubai', desc: 'Global business, sustainability & innovation district' },
+      { icon: 'trending', title: '7.5% High Yield', desc: 'Top gross rental yield & strong off-plan demand' },
+      { icon: 'shield', title: 'Master-Planned', desc: 'Integrated smart city infrastructure' },
+    ],
+    faqs: [
+      { q: 'Why is Dubai South a top investment destination?', a: 'With the AED 128B Al Maktoum International Airport expansion and Expo City Dubai, Dubai South is projected to become Dubai\'s largest urban economic center.' },
+      { q: 'What property types are available in Dubai South?', a: 'Dubai South offers off-plan and ready modern apartments, luxury townhouses, and expansive green villa communities like South Bay.' },
+      { q: 'What rental yields can investors expect?', a: 'Average rental yields in Dubai South currently range from 7% to 8.5%, making it one of the highest-yielding areas in the UAE.' },
+    ],
+  },
 ];
 
 export const INSIGHTS = [
@@ -359,7 +379,7 @@ export const TESTIMONIALS = [
     avatar: 'https://i.pravatar.cc/100?img=12'
   },
   {
-    text: '"The team\'s deep knowledge of the off-plan market gave us the confidence to invest in Dubai. Our portfolio has grown by 34% in two years."',
+    text: '"The team\'s deep knowledge of the off-plan market gave us the confidence to invest in Dubai."',
     name: 'Anjali & Vikram Mehta',
     role: 'Investment Clients — India',
     avatar: 'https://i.pravatar.cc/100?img=33'

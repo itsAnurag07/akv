@@ -80,11 +80,24 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
         </div>
 
         <div className="footer-col" id="contact">
-          <h4>Contact</h4>
-          <div className="footer-contact-item"><span className="fi"><Phone size={13} strokeWidth={2} /></span><span>+971 4 400 0000</span></div>
+          <h4>Contact &amp; Offices</h4>
+          <div className="footer-contact-item"><span className="fi"><Phone size={13} strokeWidth={2} /></span><span>+91 70090 66676</span></div>
           <div className="footer-contact-item"><span className="fi"><Mail size={13} strokeWidth={2} /></span><span>info@akvglobal.ae</span></div>
-          <div className="footer-contact-item"><span className="fi"><MapPin size={13} strokeWidth={2} /></span><span>Office 1204, Damac Smart Heights, Barsha Heights, Dubai, UAE</span></div>
-          <div className="footer-contact-item"><span className="fi"><MessageCircle size={13} strokeWidth={2} /></span><span><a href="https://wa.me/971500000000" style={{ color: 'rgba(255,255,255,0.55)' }}>WhatsApp Us</a></span></div>
+          <div className="footer-contact-item" style={{ alignItems: 'flex-start' }}>
+            <span className="fi" style={{ marginTop: '3px' }}><MapPin size={13} strokeWidth={2} /></span>
+            <div>
+              <strong style={{ color: 'var(--c-gold)', display: 'block', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Dubai Office</strong>
+              <span>Business Bay, Clover Bay, Dubai, UAE</span>
+            </div>
+          </div>
+          <div className="footer-contact-item" style={{ alignItems: 'flex-start', marginTop: '6px' }}>
+            <span className="fi" style={{ marginTop: '3px' }}><MapPin size={13} strokeWidth={2} /></span>
+            <div>
+              <strong style={{ color: 'var(--c-gold)', display: 'block', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>India Office</strong>
+              <span>Dada Colony, Industrial Area, Jalandhar 144008, Punjab, India</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
