@@ -98,7 +98,7 @@ export default function AboutPage({ onNavigate }) {
       volume: 'AED 3.2B+ Closed',
       bio: 'Former senior advisor for tier-1 Dubai developers. Habib leads operations and sales at AKV to maintain direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
       img: 'images/Habib Khan.jpeg',
-      link: 'https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20connect%20with%20Habib%20Khan.',
+      link: 'https://www.linkedin.com/in/habib-khann/',
     },
   ];
 
