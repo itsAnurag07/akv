@@ -111,6 +111,7 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
           <a href="#">Privacy Policy</a>
           <a href="#">Terms &amp; Conditions</a>
           <a href="#">Cookie Policy</a>
+          <span onClick={() => handleNav('admin')} style={{ cursor: 'pointer', color: 'rgba(197, 160, 89, 0.7)', transition: 'color 0.2s' }} title="Off-Plan Admin Management Portal">Staff Admin Portal</span>
         </div>
       </div>
     </footer>

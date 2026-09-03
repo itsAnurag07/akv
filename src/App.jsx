@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { PROPERTIES, OFFPLAN, COMMUNITIES, TESTIMONIALS } from './data';
+import { PROPERTIES } from './data';
 import AboutPage from './components/AboutPage';
 import CommunitiesPage from './components/CommunitiesPage';
 import WhyInvestPage from './components/WhyInvestPage';
 import GlobalFooter from './components/Footer';
+import AdminDashboard from './components/AdminDashboard';
+import AdminLogin from './components/AdminLogin';
+import { getOffPlanProjects } from './utils/offplanStore';
 import {
   MapPin, Bed, Bath, Maximize2, Building2, TrendingUp, Anchor,
   Waves, Star, ShoppingBag, UtensilsCrossed, Compass, Shield,
-  Hotel, Phone, Mail, MessageCircle, ArrowRight, ChevronRight,
-  LayoutGrid, List, Search, Globe, Construction, Sparkles,
-  CheckCircle, Award, Users, Home, Key, X
+  Hotel, Phone, ArrowRight, ChevronRight,
+  LayoutGrid, List, Globe, Construction, Sparkles,
+  CheckCircle, X
 } from 'lucide-react';
 
 // Helper to format percentage calculations for payment plans
@@ -73,7 +76,8 @@ function PropertyCard({ property, large = false, onNavigate }) {
 // Property Detail Page Component
 function PropertyDetailSection({ propertyId, onNavigate }) {
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
-  const p = PROPERTIES.find(x => x.id === propertyId);
+  const allOffplan = getOffPlanProjects();
+  const p = PROPERTIES.find(x => String(x.id) === String(propertyId)) || allOffplan.find(x => String(x.id) === String(propertyId));
   if (!p) return null;
 
   return (
@@ -193,6 +197,7 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               </div>
             )}
             <div className="agent-card">
+<<<<<<< HEAD
               <div className="label" style={{ marginBottom: '16px' }}>Your Advisory Leadership</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)' }}>
@@ -210,6 +215,11 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
                   </div>
                 </div>
               </div>
+=======
+              <div className="label" style={{ marginBottom: '16px' }}>Your Advisor</div>
+              <h3>Pardeep Singh</h3>
+              <div className="agent-title">Co-Founder &amp; Managing Director · AKV Global</div>
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
               <div className="agent-actions">
                 <a href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20this%20property." target="_blank" rel="noopener noreferrer" className="btn btn-gold" style={{ justifyContent: 'center', width: '100%' }}>
                   <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: '16px', height: '16px', marginRight: '8px' }}>
@@ -388,6 +398,27 @@ function App() {
   const [currentPropertyId, setCurrentPropertyId] = useState(null);
   const [currentCommunityId, setCurrentCommunityId] = useState(null);
 
+  // Off-Plan projects reactive state
+  const [offPlanProjects, setOffPlanProjects] = useState(getOffPlanProjects());
+
+  // Admin authentication state
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    return localStorage.getItem('akv_admin_authenticated') === 'true' ||
+           sessionStorage.getItem('akv_admin_authenticated') === 'true';
+  });
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('akv_admin_authenticated');
+    sessionStorage.removeItem('akv_admin_authenticated');
+    setIsAdminAuthenticated(false);
+    setCurrentPage('home');
+  };
+
+  // Refresh offplan data whenever navigating
+  useEffect(() => {
+    setOffPlanProjects(getOffPlanProjects());
+  }, [currentPage]);
+
   // Navbar and Menu states
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -450,7 +481,7 @@ function App() {
     if (listingTab === 'Buy' || listingTab === 'Rent') {
       filtered = PROPERTIES.filter(p => !p.offplan);
     } else if (listingTab === 'Off-Plan') {
-      filtered = PROPERTIES.filter(p => p.offplan);
+      filtered = offPlanProjects;
     }
 
     // Filter by Location
@@ -501,7 +532,10 @@ function App() {
 
           <div className="nav-links">
             <span className="nav-link" onClick={() => { setListingTab('Buy'); navigate('listings'); }}>BUY</span>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
             <span className="nav-link" onClick={() => { setListingTab('Off-Plan'); navigate('listings'); }}>OFF-PLAN</span>
             <span className="nav-link" onClick={() => navigate('communities')}>COMMUNITES</span>
             <span className="nav-link" onClick={() => navigate('why-invest')}>WHY INVEST IN DUBAI</span>
@@ -593,7 +627,11 @@ function App() {
           {/* HERO */}
           <section id="hero">
             <div className="hero-video-bg">
+<<<<<<< HEAD
               <video autoPlay loop muted playsInline preload="auto" poster="/images/hero.png">
+=======
+              <video autoPlay loop muted playsInline>
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                 <source src="https://akv.intelloft.in/wp-content/uploads/2026/08/AKV-Global-Consultant.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -869,15 +907,13 @@ function App() {
                 <button className="btn btn-outline-light" onClick={() => { setListingTab('Off-Plan'); setFilterType(''); setFilterLocation(''); navigate('listings'); }}>All Off-Plan</button>
               </div>
               <div className="offplan-grid" id="offplan-grid">
-                {OFFPLAN.map(p => (
-                  <div key={p.id} className="offplan-card" onClick={() => { setListingTab('Off-Plan'); setFilterType(''); setFilterLocation(''); navigate('listings'); }}>
+                {offPlanProjects.map(p => (
+                  <div key={p.id} className="offplan-card" onClick={() => navigate('property', p.id)}>
                     <div className="prop-img-wrap">
-                      <img src={p.img} alt={p.name} loading="lazy" />
+                      <img src={p.img || (p.images && p.images[0])} alt={p.name} loading="lazy" />
                       <div className="prop-badge-container">
-                        <span className="prop-badge-tag prop-badge-tag--gold">Exclusive</span>
-                        {p.id === 'op2' && (
-                          <span className="prop-badge-tag prop-badge-tag--private">Private Listing</span>
-                        )}
+                        <span className="prop-badge-tag prop-badge-tag--gold">{p.developer || 'Exclusive'}</span>
+                        <span className="prop-badge-tag prop-badge-tag--private">{p.completion || 'Off-Plan'}</span>
                       </div>
                     </div>
                     <div className="prop-body">
@@ -888,6 +924,17 @@ function App() {
                         <MapPin size={12} strokeWidth={2} style={{ color: 'var(--c-gold)', flexShrink: 0 }} />
                         {p.location}
                       </div>
+<<<<<<< HEAD
+=======
+                      <div className="prop-footer">
+                        <div className="prop-listing-type" style={{ color: 'var(--c-gold)', fontWeight: 600 }}>{p.price}</div>
+                        <div className="prop-specs-row">
+                          <span className="prop-spec-mini"><Bed size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.beds} Beds</span>
+                          <span className="prop-spec-mini"><Bath size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.baths} Baths</span>
+                          <span className="prop-spec-mini"><Maximize2 size={12} strokeWidth={2} style={{ marginRight: '3px' }} />{p.area} sqft</span>
+                        </div>
+                      </div>
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                     </div>
                   </div>
                 ))}
@@ -1166,6 +1213,7 @@ function App() {
         <WhyInvestPage onNavigate={navigate} />
       )}
 
+<<<<<<< HEAD
       {/* Floating WhatsApp Button */}
       <a
         href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20have%20an%20inquiry%20regarding%20Dubai%20Properties."
@@ -1179,6 +1227,18 @@ function App() {
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
         </svg>
       </a>
+=======
+      {currentPage === 'admin' && (
+        isAdminAuthenticated ? (
+          <AdminDashboard onNavigate={navigate} onLogout={handleAdminLogout} />
+        ) : (
+          <AdminLogin
+            onLoginSuccess={() => setIsAdminAuthenticated(true)}
+            onCancel={() => navigate('home')}
+          />
+        )
+      )}
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
     </>
   );
 }

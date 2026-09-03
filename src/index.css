@@ -7511,6 +7511,7 @@ html, body {
   .cta-title {
     font-size: 28px;
   }
+<<<<<<< HEAD
 }
 
 /* ── Floating WhatsApp Button ── */
@@ -7781,4 +7782,6 @@ html, body {
   .overview-container {
     padding-top: 24px !important;
   }
+=======
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
 }

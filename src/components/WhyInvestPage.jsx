@@ -86,7 +86,11 @@ export default function WhyInvestPage({ onNavigate }) {
               </p>
               <div className="why-hero-btns">
                 <a
+<<<<<<< HEAD
                   href="https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20I%20would%20like%20to%20book%20a%20free%20strategy%20call."
+=======
+                  href="https://wa.me/971500000000"
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                   className="btn btn-gold btn-lg"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -150,7 +154,11 @@ export default function WhyInvestPage({ onNavigate }) {
                     </div>
                     <div className="comp-col-body">
                       <div className="comp-item">
+<<<<<<< HEAD
                         <span className="item-lbl">Investment (400 - 500 sq. ft.)</span>
+=======
+                        <span className="item-lbl">Investment (800 sq. ft.)</span>
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                         <span className="item-val val-success">₹ 2.00 Cr</span>
                       </div>
                       <div className="comp-item">
@@ -275,10 +283,13 @@ export default function WhyInvestPage({ onNavigate }) {
                     <span className="visa-check">✓</span>
                     <span className="visa-text">Right to live, work, and study in UAE</span>
                   </li>
+<<<<<<< HEAD
                   <li>
                     <span className="visa-check">✓</span>
                     <span className="visa-text">Complete global mobility — Travel anywhere worldwide with unrestricted multi-entry freedom</span>
                   </li>
+=======
+>>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                 </ul>
               </div>
             </div>
