@@ -3,67 +3,67 @@
 // Converts PDF document pages into high-resolution images & stores brochure URL
 // ============================================================
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-// Configure worker src for PDF.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
+// Configure matching bundled local worker URL for Vite
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 /**
  * Reads a PDF file, extracts all pages as JPEG data URLs, and reads original PDF as Data URL.
  * @param {File} file - PDF File object from input
  * @param {function} progressCallback - Optional progress callback (pageIndex, totalPages)
- * @returns {Promise<{ pdfUrl: string, pageImages: string[] }>}
+ * @returns {Promise<{ pdfUrl: string, pdfName: string, pageImages: string[] }>}
  */
 export async function processPdfFile(file, progressCallback) {
-  return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-
-    fileReader.onload = async (e) => {
-      try {
-        const pdfDataUrl = e.target.result;
-        const arrayBuffer = await file.arrayBuffer();
-
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-        const pdfDoc = await loadingTask.promise;
-        const totalPages = pdfDoc.numPages;
-        const pageImages = [];
-
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-          if (progressCallback) progressCallback(pageNum, totalPages);
-
-          const page = await pdfDoc.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 1.8 }); // 1.8x scale for crisp high-resolution images
-
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-          };
-
-          await page.render(renderContext).promise;
-          const imgDataUrl = canvas.toDataURL('image/jpeg', 0.88);
-          pageImages.push(imgDataUrl);
-        }
-
-        resolve({
-          pdfUrl: pdfDataUrl,
-          pdfName: file.name,
-          pageImages
-        });
-      } catch (err) {
-        console.error('Error processing PDF file:', err);
-        // Fallback: If canvas rendering fails, return just the PDF URL
-        const reader = new FileReader();
-        reader.onload = (ev) => resolve({ pdfUrl: ev.target.result, pdfName: file.name, pageImages: [] });
-        reader.onerror = (readErr) => reject(readErr);
-        reader.readAsDataURL(file);
-      }
-    };
-
-    fileReader.onerror = (err) => reject(err);
-    fileReader.readAsDataURL(file);
+  const arrayBuffer = await file.arrayBuffer();
+  
+  // Read PDF Data URL for downloadable brochure
+  const pdfDataUrl = await new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = (e) => res(e.target.result);
+    reader.onerror = (e) => rej(e);
+    reader.readAsDataURL(file);
   });
+
+  try {
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdfDoc = await loadingTask.promise;
+    const totalPages = pdfDoc.numPages;
+    const pageImages = [];
+
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      if (progressCallback) progressCallback(pageNum, totalPages);
+
+      const page = await pdfDoc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 1.5 }); // 1.5x scale for optimal crispness & speed
+
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+
+      await page.render(renderContext).promise;
+      const imgDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      pageImages.push(imgDataUrl);
+    }
+
+    return {
+      pdfUrl: pdfDataUrl,
+      pdfName: file.name,
+      pageImages
+    };
+  } catch (err) {
+    console.error('PDF Page Rendering Error:', err);
+    // Return PDF URL with empty pageImages if rendering failed
+    return {
+      pdfUrl: pdfDataUrl,
+      pdfName: file.name,
+      pageImages: []
+    };
+  }
 }
