@@ -12,7 +12,7 @@ import {
   Waves, Star, ShoppingBag, UtensilsCrossed, Compass, Shield,
   Hotel, Phone, ArrowRight, ChevronRight,
   LayoutGrid, List, Globe, Construction, Sparkles,
-  CheckCircle, X, Award
+  CheckCircle, X, Award, FileText
 } from 'lucide-react';
 
 // Helper to format percentage calculations for payment plans
@@ -153,6 +153,31 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
                 <div className="detail-spec-label">Community</div>
               </div>
             </div>
+
+            {p.pdfUrl && (
+              <div className="detail-section" style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.08), rgba(27,34,41,0.03))', border: '1px solid var(--c-gold)', borderRadius: '12px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: 'var(--c-gold-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#080a0e', flexShrink: 0 }}>
+                    <FileText size={24} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '16px', color: 'var(--c-dark)', fontFamily: 'var(--ff-serif)', fontWeight: 600 }}>Official Project Brochure &amp; Floor Plan</h4>
+                    <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--c-muted)' }}>{p.pdfName || `${p.name} Brochure.pdf`} • High-res PDF specs &amp; layout</p>
+                  </div>
+                </div>
+                <a
+                  href={p.pdfUrl}
+                  download={p.pdfName || `${p.name}_Brochure.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-gold"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <FileText size={16} />
+                  Download Brochure (PDF)
+                </a>
+              </div>
+            )}
 
             <div className="detail-section">
               <h3>About This Property</h3>

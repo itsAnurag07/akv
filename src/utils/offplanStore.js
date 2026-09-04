@@ -84,6 +84,8 @@ function mapFromSupabase(row) {
     amenities: Array.isArray(row.amenities) ? row.amenities : [],
     community: row.community,
     offplan: row.offplan,
+    pdfUrl: row.pdf_url || '',
+    pdfName: row.pdf_name || '',
     createdDate: row.created_at
   };
 }
@@ -109,6 +111,8 @@ function mapToSupabase(p) {
     amenities: p.amenities || [],
     community: p.community,
     offplan: true,
+    pdf_url: p.pdfUrl || '',
+    pdf_name: p.pdfName || '',
     updated_at: new Date().toISOString()
   };
 }

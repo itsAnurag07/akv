@@ -9,11 +9,13 @@ import {
   deleteOffPlanProject,
   resetOffPlanProjects
 } from '../utils/offplanStore';
+import { processPdfFile } from '../utils/pdfExtractor';
 import './AdminDashboard.css';
 import {
   Plus, Edit3, Trash2, Search, Building2, MapPin,
   Image as ImageIcon, UploadCloud, X, CheckCircle,
-  RefreshCw, LayoutGrid, List, ArrowLeft, LogOut
+  RefreshCw, LayoutGrid, List, ArrowLeft, LogOut,
+  FileText, FilePlus, Loader
 } from 'lucide-react';
 
 const DEVELOPER_OPTIONS = ['Emaar Properties', 'DAMAC Properties', 'Sobha Realty', 'Azizi Developments', 'Nakheel', 'Select Group', 'Deyaar'];
@@ -67,10 +69,16 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
     desc: '',
     amenities: 'Lagoon Access, Swimming Pool, Fitness Center, 24/7 Security, Valet Parking',
     imgUrlInput: '',
-    images: []
+    images: [],
+    pdfUrl: '',
+    pdfName: ''
   });
 
+  const [isProcessingPdf, setIsProcessingPdf] = useState(false);
+  const [pdfProcessingStatus, setPdfProcessingStatus] = useState('');
+
   const fileInputRef = useRef(null);
+  const pdfInputRef = useRef(null);
 
   // Load project list on mount
   useEffect(() => {
@@ -117,7 +125,9 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       desc: 'Exclusive luxury off-plan development with state-of-the-art amenities and prime location in Dubai.',
       amenities: 'Infinity Pool, Private Beach, Concierge, Valet Parking, Spa & Gym',
       imgUrlInput: '',
-      images: ['images/offplan.png', 'images/penthouse.png']
+      images: ['images/offplan.png', 'images/penthouse.png'],
+      pdfUrl: '',
+      pdfName: ''
     });
     setModalMode('create');
     setEditingId(null);
@@ -141,29 +151,59 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       desc: project.desc || '',
       amenities: Array.isArray(project.amenities) ? project.amenities.join(', ') : (project.amenities || ''),
       imgUrlInput: '',
-      images: project.images && project.images.length > 0 ? project.images : [project.img || 'images/offplan.png']
+      images: project.images && project.images.length > 0 ? project.images : [project.img || 'images/offplan.png'],
+      pdfUrl: project.pdfUrl || '',
+      pdfName: project.pdfName || ''
     });
     setEditingId(project.id);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  // Handle File Upload (FileReader Base64 conversion for persistence)
-  const handleFileUpload = (e) => {
+  // Handle File Upload (Image files + PDF document extraction)
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const dataUrl = event.target.result;
-        setFormData(prev => ({
-          ...prev,
-          images: [...prev.images, dataUrl]
-        }));
-      };
-      reader.readAsDataURL(file);
-    });
+    for (const file of files) {
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        // PDF File Processing
+        try {
+          setIsProcessingPdf(true);
+          setPdfProcessingStatus(`Extracting pages from ${file.name}...`);
+          
+          const result = await processPdfFile(file, (curr, total) => {
+            setPdfProcessingStatus(`Rendering PDF page ${curr} of ${total}...`);
+          });
+
+          setFormData(prev => ({
+            ...prev,
+            pdfUrl: result.pdfUrl,
+            pdfName: result.pdfName,
+            images: [...prev.images, ...(result.pageImages || [])]
+          }));
+
+          showToast(`Attached ${file.name}! Extracted ${result.pageImages.length} page photo(s) to project gallery.`);
+        } catch (err) {
+          console.error('PDF extraction failed:', err);
+          alert(`Failed to extract pages from PDF: ${err.message}`);
+        } finally {
+          setIsProcessingPdf(false);
+          setPdfProcessingStatus('');
+        }
+      } else {
+        // Standard Image File Processing
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target.result;
+          setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, dataUrl]
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
   };
 
   // Handle Add Image URL Input
@@ -232,7 +272,9 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       amenities: amenitiesArray,
       img: finalImages[0],
       images: finalImages,
-      community: formData.location
+      community: formData.location,
+      pdfUrl: formData.pdfUrl || '',
+      pdfName: formData.pdfName || ''
     };
 
     if (modalMode === 'create') {
@@ -682,20 +724,65 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
                       <ImageIcon size={18} /> Project Image Assets & Gallery
                     </label>
 
-                    {/* File Upload Zone */}
+                    {/* File Upload Zone (Images & PDF Document) */}
                     <div className="image-upload-zone" onClick={() => fileInputRef.current?.click()}>
-                      <UploadCloud size={36} className="upload-icon" />
-                      <div className="upload-text-main">Click or Drag & Drop Local Image Files to Upload</div>
-                      <div className="upload-text-sub">Supports JPG, PNG, WEBP. Converted to persistent data URLs.</div>
+                      {isProcessingPdf ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--c-gold)' }}>
+                          <Loader size={36} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+                          <div className="upload-text-main">{pdfProcessingStatus}</div>
+                        </div>
+                      ) : (
+                        <>
+                          <UploadCloud size={36} className="upload-icon" />
+                          <div className="upload-text-main">Click or Drag & Drop Image Files or PDF Brochures</div>
+                          <div className="upload-text-sub">
+                            ✨ PDF Auto-Extract: Uploading a brochure PDF automatically extracts all page photos into your project gallery and creates a downloadable brochure for visitors!
+                          </div>
+                        </>
+                      )}
                       <input
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
-                        accept="image/*"
+                        accept="image/*,application/pdf"
                         multiple
                         style={{ display: 'none' }}
                       />
                     </div>
+
+                    {/* PDF Brochure Attachment Pill */}
+                    {formData.pdfUrl && (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(197,160,89,0.1)', border: '1px solid var(--c-gold)', borderRadius: '8px', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#fff', fontSize: '13px' }}>
+                          <FileText size={20} style={{ color: 'var(--c-gold)' }} />
+                          <div>
+                            <div style={{ fontWeight: 600 }}>{formData.pdfName || 'Official Project Brochure.pdf'}</div>
+                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>Attached Brochure PDF • Available for download on frontend</div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <a
+                            href={formData.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={formData.pdfName || 'brochure.pdf'}
+                            className="btn-admin-secondary"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                          >
+                            Preview PDF
+                          </a>
+                          <button
+                            type="button"
+                            className="gallery-thumb-remove"
+                            style={{ position: 'relative', top: 'auto', right: 'auto' }}
+                            onClick={() => setFormData(prev => ({ ...prev, pdfUrl: '', pdfName: '' }))}
+                            title="Remove PDF Brochure"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Image URL Direct Input */}
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>

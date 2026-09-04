@@ -23,9 +23,15 @@ CREATE TABLE IF NOT EXISTS public.offplan_projects (
     amenities JSONB DEFAULT '[]'::jsonb,
     community TEXT DEFAULT 'Dubai',
     offplan BOOLEAN DEFAULT true,
+    pdf_url TEXT DEFAULT '',
+    pdf_name TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add pdf columns if upgrading existing table
+ALTER TABLE public.offplan_projects ADD COLUMN IF NOT EXISTS pdf_url TEXT DEFAULT '';
+ALTER TABLE public.offplan_projects ADD COLUMN IF NOT EXISTS pdf_name TEXT DEFAULT '';
 
 -- 2. Create Inquiries Table (Lead Submissions)
 CREATE TABLE IF NOT EXISTS public.inquiries (
