@@ -279,7 +279,6 @@ export default function AboutPage({ onNavigate }) {
               <div className="ab2-vision-image-col">
                 <div className="ab2-founder-portrait-wrap">
                   <img
-<<<<<<< HEAD
                     src="images/Paramdeep_new.png"
                     alt="Paramdeep Singh Co-Founder"
                     className="ab2-founder-img"
@@ -287,15 +286,6 @@ export default function AboutPage({ onNavigate }) {
                   <div className="ab2-founder-badge">
                     <div className="ab2-founder-name">Paramdeep Singh</div>
                     <div className="ab2-founder-role">Co-Founder &amp; Managing Director</div>
-=======
-                    src="images/Pardeep Singh.png"
-                    alt="Pardeep Singh Co-Founder"
-                    className="ab2-founder-img"
-                  />
-                  <div className="ab2-founder-badge">
-                    <div className="ab2-founder-name">Pardeep Singh</div>
-                    <div className="ab2-founder-role">Co-Founders &amp; Managing Directors</div>
->>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                   </div>
                 </div>
               </div>
@@ -307,24 +297,15 @@ export default function AboutPage({ onNavigate }) {
                 </h2>
                 <div className="ab2-quote-divider" />
                 <p className="ab2-story-body">
-<<<<<<< HEAD
                   When we established AKV Global Consultant, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
-=======
-                  When we established AKV Global Consultancy over fifteen years ago, we anchored our firm around three core commitments: <strong>Assist, Knowledge, and Vision</strong>. We assist every client in finding and acquiring the exact property or asset aligned with their unique requirements.
->>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                 </p>
                 <p className="ab2-story-body">
                   Whether you are seeking an iconic beachfront villa on Palm Jumeirah, high-yielding off-plan apartments in Downtown Dubai, or structuring a multi-asset commercial portfolio, our commitment remains absolute — unyielding integrity, exclusive access, and personal stewardship.
                 </p>
 
                 <div className="ab2-signature-row">
-<<<<<<< HEAD
                   <div className="ab2-sig-text">Paramdeep Singh</div>
                   <div className="ab2-sig-tag">Co-Founder &amp; Managing Director, AKV Global</div>
-=======
-                  <div className="ab2-sig-text">Pardeep Singh</div>
-                  <div className="ab2-sig-tag">Co-Founders, AKV Global</div>
->>>>>>> 9312f9f (Add Off-Plan Admin Dashboard with CRUD capabilities, image uploads, login portal, and local storage persistence)
                 </div>
               </div>
             </div>
