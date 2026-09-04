@@ -78,23 +78,31 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const allOffplan = getOffPlanProjects();
   const p = PROPERTIES.find(x => String(x.id) === String(propertyId)) || allOffplan.find(x => String(x.id) === String(propertyId));
-  if (!p) return null;
+  const galleryImages = (p.images && p.images.length > 0) ? p.images : [p.img || 'images/offplan.png'];
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
+  const activeMainImg = galleryImages[activeImgIndex] || p.img || 'images/offplan.png';
 
   return (
     <div id="page-property" className="page active">
       <div id="property-detail-content">
         <div className="detail-gallery">
           <div className="gallery-main">
-            <img src={p.img} alt={p.name} />
+            <img src={activeMainImg} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           <div className="gallery-thumbs">
-            <div className="gallery-thumb"><img src={p.img} alt="" /></div>
-            <div className="gallery-thumb"><img src="images/apartment.png" alt="" /></div>
-            <div className="gallery-thumb"><img src="images/villa.png" alt="" /></div>
-            <div className="gallery-thumb">
-              <img src="images/penthouse.png" alt="" />
-              <div className="gallery-more">+6 Photos</div>
-            </div>
+            {galleryImages.slice(0, 4).map((imgUrl, idx) => (
+              <div
+                key={idx}
+                className={`gallery-thumb ${idx === activeImgIndex ? 'active' : ''}`}
+                onClick={() => setActiveImgIndex(idx)}
+                style={{ cursor: 'pointer', border: idx === activeImgIndex ? '2px solid var(--c-gold)' : 'none' }}
+              >
+                <img src={imgUrl} alt={`${p.name} photo ${idx + 1}`} />
+                {idx === 3 && galleryImages.length > 4 && (
+                  <div className="gallery-more">+{galleryImages.length - 4} Photos</div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
