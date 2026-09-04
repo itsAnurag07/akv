@@ -74,6 +74,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
   });
 
   const fileInputRef = useRef(null);
+  const pdfInputRef = useRef(null);
 
   // Load project list on mount
   useEffect(() => {
@@ -727,39 +728,68 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
                       />
                     </div>
 
-                    {/* PDF Brochure Attachment Pill */}
-                    {formData.pdfUrl && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(197,160,89,0.1)', border: '1px solid var(--c-gold)', borderRadius: '8px', marginBottom: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#fff', fontSize: '13px' }}>
-                          <FileText size={20} style={{ color: 'var(--c-gold)' }} />
-                          <div>
-                            <div style={{ fontWeight: 600 }}>{formData.pdfName || 'Official Project Brochure.pdf'}</div>
-                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>Attached Brochure PDF • Available for download on frontend</div>
+                    {/* PDF Brochure Attachment Section */}
+                    <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', marginBottom: '20px' }}>
+                      <label className="admin-label" style={{ fontSize: '14px', color: 'var(--c-gold)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                        <FileText size={16} /> Project Official PDF Brochure &amp; Floor Plan
+                      </label>
+                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 12px 0' }}>
+                        Upload a PDF document (Brochure, Floorplan, or Factsheet) for visitors to view online or download on the property page.
+                      </p>
+
+                      {formData.pdfUrl ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(197,160,89,0.15)', border: '1px solid var(--c-gold)', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#fff', fontSize: '13px' }}>
+                            <FileText size={22} style={{ color: 'var(--c-gold)' }} />
+                            <div>
+                              <div style={{ fontWeight: 600, color: '#fff' }}>{formData.pdfName || 'Official Project Brochure.pdf'}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--c-gold)', marginTop: '2px' }}>✓ PDF Attached • Live Download Available on Property Page</div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <a
+                              href={formData.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-admin-secondary"
+                              style={{ padding: '6px 12px', fontSize: '12px' }}
+                            >
+                              Preview PDF
+                            </a>
+                            <button
+                              type="button"
+                              className="btn-admin-secondary"
+                              style={{ padding: '6px 12px', fontSize: '12px', borderColor: 'rgba(239,68,68,0.4)', color: '#f87171' }}
+                              onClick={() => setFormData(prev => ({ ...prev, pdfUrl: '', pdfName: '' }))}
+                            >
+                              Remove PDF
+                            </button>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <a
-                            href={formData.pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download={formData.pdfName || 'brochure.pdf'}
-                            className="btn-admin-secondary"
-                            style={{ padding: '4px 10px', fontSize: '12px' }}
-                          >
-                            Preview PDF
-                          </a>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                           <button
                             type="button"
-                            className="gallery-thumb-remove"
-                            style={{ position: 'relative', top: 'auto', right: 'auto' }}
-                            onClick={() => setFormData(prev => ({ ...prev, pdfUrl: '', pdfName: '' }))}
-                            title="Remove PDF Brochure"
+                            className="btn-admin-secondary"
+                            onClick={() => pdfInputRef.current?.click()}
+                            style={{ borderColor: 'var(--c-gold)', color: 'var(--c-gold)' }}
                           >
-                            <X size={12} />
+                            <FileText size={15} /> Select &amp; Upload PDF Brochure
                           </button>
+                          <span style={{ fontSize: '12px', color: '#64748b' }}>No PDF attached yet</span>
+                          <input
+                            type="file"
+                            ref={pdfInputRef}
+                            onChange={(e) => {
+                              const file = e.target.files && e.target.files[0];
+                              if (file) handlePdfUploadFile(file);
+                            }}
+                            accept="application/pdf"
+                            style={{ display: 'none' }}
+                          />
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
                     {/* Image URL Direct Input */}
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>

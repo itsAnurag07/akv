@@ -82,6 +82,8 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const activeMainImg = galleryImages[activeImgIndex] || p.img || 'images/offplan.png';
 
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+
   return (
     <div id="page-property" className="page active">
       <div id="property-detail-content">
@@ -130,7 +132,6 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               </div>
             </div>
 
-
             <div className="detail-specs">
               <div className="detail-spec">
                 <div className="detail-spec-icon"><Bed size={22} strokeWidth={1.5} /></div>
@@ -154,30 +155,53 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               </div>
             </div>
 
-            {p.pdfUrl && (
-              <div className="detail-section" style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.08), rgba(27,34,41,0.03))', border: '1px solid var(--c-gold)', borderRadius: '12px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: 'var(--c-gold-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#080a0e', flexShrink: 0 }}>
-                    <FileText size={24} />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '16px', color: 'var(--c-dark)', fontFamily: 'var(--ff-serif)', fontWeight: 600 }}>Official Project Brochure &amp; Floor Plan</h4>
-                    <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--c-muted)' }}>{p.pdfName || `${p.name} Brochure.pdf`} • High-res PDF specs &amp; layout</p>
-                  </div>
+            {/* Official Project Brochure Section */}
+            <div className="detail-section" style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.08), rgba(27,34,41,0.03))', border: '1px solid var(--c-gold)', borderRadius: '12px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', background: 'var(--c-gold-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#080a0e', flexShrink: 0 }}>
+                  <FileText size={24} />
                 </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '16px', color: 'var(--c-dark)', fontFamily: 'var(--ff-serif)', fontWeight: 600 }}>Official Project Brochure &amp; Floor Plan</h4>
+                  <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--c-muted)' }}>
+                    {p.pdfUrl ? (p.pdfName || `${p.name} Brochure.pdf`) : 'Official developer factsheet & floorplan layouts'}
+                  </p>
+                </div>
+              </div>
+
+              {p.pdfUrl ? (
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => setIsPdfModalOpen(true)}
+                  >
+                    View Online
+                  </button>
+                  <a
+                    href={p.pdfUrl}
+                    download={p.pdfName || `${p.name}_Brochure.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-gold"
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <FileText size={16} />
+                    Download PDF
+                  </a>
+                </div>
+              ) : (
                 <a
-                  href={p.pdfUrl}
-                  download={p.pdfName || `${p.name}_Brochure.pdf`}
+                  href={`https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20please%20send%20me%20the%20official%20brochure%20PDF%20for%20${encodeURIComponent(p.name)}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-gold"
                   style={{ textDecoration: 'none' }}
                 >
                   <FileText size={16} />
-                  Download Brochure (PDF)
+                  Request Brochure PDF
                 </a>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="detail-section">
               <h3>About This Property</h3>
@@ -222,13 +246,52 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
                     <span className="payment-step-label">On Handover</span>
                     <span className="payment-step-pct">40%</span>
                   </div>
-                  <div className="payment-step">
-                    <span className="payment-step-label">Completion</span>
-                    <span className="payment-step-val">{p.completion}</span>
-                  </div>
                 </div>
               </div>
             )}
+
+            {/* Sidebar PDF Brochure Card */}
+            <div style={{ background: 'var(--c-white)', border: '1px solid var(--c-border)', borderRadius: 'var(--radius-md)', padding: '24px', marginBottom: '24px', boxShadow: 'var(--c-card-shadow)' }}>
+              <div className="label" style={{ marginBottom: '8px' }}>Documentation</div>
+              <h4 style={{ fontFamily: 'var(--ff-serif)', fontSize: '18px', marginBottom: '8px', color: 'var(--c-dark)' }}>Project Factsheet &amp; Brochure</h4>
+              <p style={{ fontSize: '13px', color: 'var(--c-muted)', lineHeight: 1.5, marginBottom: '16px' }}>
+                {p.pdfUrl ? 'Download the official developer brochure & floorplan layout document.' : 'Request official digital factsheet and floorplan layouts.'}
+              </p>
+              {p.pdfUrl ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <a
+                    href={p.pdfUrl}
+                    download={p.pdfName || `${p.name}_Brochure.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-gold"
+                    style={{ justifyContent: 'center', width: '100%', textDecoration: 'none' }}
+                  >
+                    <FileText size={16} />
+                    Download Brochure (PDF)
+                  </a>
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => setIsPdfModalOpen(true)}
+                    style={{ justifyContent: 'center', width: '100%' }}
+                  >
+                    View Online Preview
+                  </button>
+                </div>
+              ) : (
+                <a
+                  href={`https://wa.me/917009066676?text=Hello%20AKV%20Global%2C%20please%20send%20me%20the%20official%20brochure%20PDF%20for%20${encodeURIComponent(p.name)}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-gold"
+                  style={{ justifyContent: 'center', width: '100%', textDecoration: 'none' }}
+                >
+                  <FileText size={16} />
+                  Request Brochure PDF
+                </a>
+              )}
+            </div>
+
             <div className="agent-card">
               <div className="label" style={{ marginBottom: '16px' }}>Your Advisory Leadership</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -304,6 +367,40 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
             </div>
           </div>
         </div>
+
+        {/* Interactive PDF Viewer Modal */}
+        {isPdfModalOpen && p.pdfUrl && (
+          <div className="admin-modal-overlay" onClick={() => setIsPdfModalOpen(false)}>
+            <div className="admin-modal" style={{ width: '92vw', maxWidth: '1080px', height: '88vh', display: 'flex', flexDirection: 'column', background: '#0f172a' }} onClick={e => e.stopPropagation()}>
+              <div className="admin-modal-header" style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#fff' }}>
+                  <FileText size={22} style={{ color: 'var(--c-gold)' }} />
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '16px', color: '#fff' }}>{p.pdfName || `${p.name} Brochure.pdf`}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--c-gold)' }}>Official Developer Factsheet &amp; Layout</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <a
+                    href={p.pdfUrl}
+                    download={p.pdfName || `${p.name}_Brochure.pdf`}
+                    className="btn btn-gold"
+                    style={{ padding: '8px 18px', fontSize: '13px', textDecoration: 'none' }}
+                  >
+                    <FileText size={15} />
+                    Download PDF
+                  </a>
+                  <button className="admin-modal-close" onClick={() => setIsPdfModalOpen(false)}>
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+              <div style={{ flex: 1, background: '#1e293b', width: '100%', height: '100%' }}>
+                <iframe src={p.pdfUrl} width="100%" height="100%" style={{ border: 'none' }} title="Brochure PDF Viewer" />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
