@@ -16,6 +16,11 @@ import {
   RefreshCw, LayoutGrid, List, ArrowLeft, LogOut,
   FileText
 } from 'lucide-react';
+import {
+  uploadImageToWordPress,
+  fetchWordPressMediaGallery,
+  resolveImageUrl
+} from '../utils/wpMedia';
 
 const DEVELOPER_OPTIONS = ['Emaar Properties', 'DAMAC Properties', 'Sobha Realty', 'Azizi Developments', 'Nakheel', 'Select Group', 'Deyaar'];
 const CATEGORY_OPTIONS = ['Apartment', 'Villa', 'Penthouse', 'Townhouse', 'Retail'];
@@ -32,7 +37,7 @@ const STOCK_PRESET_IMAGES = [
   'images/downtown_dubai.png',
   'images/palm_jumeirah.png',
   'images/dubai_marina.png'
-];
+].map(resolveImageUrl);
 
 export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange }) {
   const [projects, setProjects] = useState([]);
@@ -51,6 +56,13 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
   
   // Toast Notification state
   const [toastMessage, setToastMessage] = useState('');
+
+  // WordPress Media Upload & Gallery Browser states
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadStatusText, setUploadStatusText] = useState('');
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [wpGallery, setWpGallery] = useState([]);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
   
   // Form State
   const [formData, setFormData] = useState({
@@ -156,26 +168,78 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
     setIsModalOpen(true);
   };
 
-  // Handle Image File Upload
-  const handleFileUpload = (e) => {
+  // Handle Image File Upload (Automatic WordPress Media Gallery Upload)
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
-    files.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const dataUrl = event.target.result;
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    const pdfFiles = files.filter(file => file.type === 'application/pdf' || file.name.endsWith('.pdf'));
+
+    // Handle PDF brochures
+    pdfFiles.forEach(file => handlePdfUploadFile(file));
+
+    // Upload images directly to WordPress Media Gallery
+    if (imageFiles.length > 0) {
+      setIsUploadingImage(true);
+      setUploadStatusText(`Preparing to upload ${imageFiles.length} image(s) to WordPress...`);
+
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        setUploadStatusText(`Uploading ${i + 1}/${imageFiles.length}: "${file.name}" to WordPress Gallery...`);
+        try {
+          const wpResult = await uploadImageToWordPress(file);
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, dataUrl]
+            images: [...prev.images, wpResult.url]
           }));
-        };
-        reader.readAsDataURL(file);
-      } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-        handlePdfUploadFile(file);
+          showToast(`Uploaded "${file.name}" to WordPress Gallery!`);
+        } catch (err) {
+          console.error('WordPress upload failed, saving locally:', err);
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            setFormData(prev => ({
+              ...prev,
+              images: [...prev.images, dataUrl]
+            }));
+          };
+          reader.readAsDataURL(file);
+          showToast(`Upload error for "${file.name}" — stored fallback.`);
+        }
       }
-    });
+      setIsUploadingImage(false);
+      setUploadStatusText('');
+    }
+
+    if (e.target) e.target.value = '';
+  };
+
+  // Open WordPress Media Library Gallery Picker
+  const handleOpenWpGallery = async () => {
+    setIsGalleryModalOpen(true);
+    setIsLoadingGallery(true);
+    try {
+      const items = await fetchWordPressMediaGallery({ perPage: 50 });
+      setWpGallery(items);
+    } catch (err) {
+      console.error('Error fetching WordPress gallery:', err);
+    } finally {
+      setIsLoadingGallery(false);
+    }
+  };
+
+  // Add an image from WordPress Gallery to the project
+  const handleSelectFromWpGallery = (url) => {
+    if (!formData.images.includes(url)) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, url]
+      }));
+      showToast('Image added from WordPress Gallery!');
+    } else {
+      showToast('Image is already selected in project gallery.');
+    }
   };
 
   // Dedicated PDF Brochure Upload Handler
@@ -742,6 +806,17 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                       />
                     </div>
 
+                    {/* WordPress Active Upload Status Banner */}
+                    {isUploadingImage && (
+                      <div className="admin-wp-upload-banner">
+                        <RefreshCw size={20} className="spin" style={{ color: 'var(--c-gold)', flexShrink: 0 }} />
+                        <div>
+                          <div style={{ color: '#fff', fontWeight: 600, fontSize: '13px' }}>WordPress Media Upload Active</div>
+                          <div style={{ color: 'var(--c-gold)', fontSize: '12px' }}>{uploadStatusText}</div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* PDF Brochure Attachment Section */}
                     <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', marginBottom: '20px' }}>
                       <label className="admin-label" style={{ fontSize: '14px', color: 'var(--c-gold)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
@@ -821,6 +896,18 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                         style={{ flexShrink: 0 }}
                       >
                         Add Image URL
+                      </button>
+                    </div>
+
+                    {/* WordPress Gallery Quick Picker Button */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+                      <button
+                        type="button"
+                        className="btn-admin-secondary"
+                        onClick={handleOpenWpGallery}
+                        style={{ borderColor: 'var(--c-gold)', color: 'var(--c-gold)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <ImageIcon size={15} /> Browse WordPress Media Gallery
                       </button>
                     </div>
 
@@ -915,6 +1002,65 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
               </button>
               <button className="btn-card-action btn-card-delete" style={{ padding: '10px 20px', fontSize: '14px' }} onClick={handleDeleteConfirm}>
                 Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── WORDPRESS MEDIA GALLERY BROWSER MODAL ── */}
+      {isGalleryModalOpen && (
+        <div className="admin-modal-backdrop" onClick={() => setIsGalleryModalOpen(false)}>
+          <div className="admin-modal" style={{ maxWidth: '840px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h2 className="admin-modal-title">
+                <ImageIcon size={20} style={{ color: 'var(--c-gold)' }} /> WordPress Media Library Gallery
+              </h2>
+              <button className="admin-modal-close" onClick={() => setIsGalleryModalOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="admin-modal-body" style={{ maxHeight: '65vh', overflowY: 'auto', padding: '20px' }}>
+              <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
+                All photos stored in your WordPress Media Gallery (<code>https://akv.intelloft.in</code>). Click any photo to attach it to this project:
+              </p>
+
+              {isLoadingGallery ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '50px 0', gap: '12px' }}>
+                  <RefreshCw size={28} className="spin" style={{ color: 'var(--c-gold)' }} />
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>Loading WordPress Media Library...</span>
+                </div>
+              ) : wpGallery.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                  No images found in WordPress gallery.
+                </div>
+              ) : (
+                <div className="wp-gallery-grid">
+                  {wpGallery.map((item) => {
+                    const isAlreadySelected = formData.images.includes(item.url);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`wp-gallery-item ${isAlreadySelected ? 'selected' : ''}`}
+                        onClick={() => handleSelectFromWpGallery(item.url)}
+                        title={item.title || item.url}
+                      >
+                        <img src={item.thumbnail || item.url} alt={item.title} loading="lazy" />
+                        {isAlreadySelected && (
+                          <div className="wp-gallery-item-badge">
+                            <CheckCircle size={13} /> Added
+                          </div>
+                        )}
+                        <div className="wp-gallery-item-title">{item.title}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="admin-modal-footer">
+              <button className="btn-admin-primary" onClick={() => setIsGalleryModalOpen(false)}>
+                Done Selecting
               </button>
             </div>
           </div>

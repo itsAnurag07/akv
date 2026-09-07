@@ -4,6 +4,7 @@
 // ============================================================
 import { OFFPLAN, PROPERTIES } from '../data';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { resolveImageUrl } from './wpMedia';
 
 const STORAGE_KEY = 'akv_offplan_projects_v1';
 
@@ -24,7 +25,7 @@ export function getInitialSeedData() {
           paymentPlan: p.paymentPlan || '60/40',
           completion: p.completion || 'Q4 2026',
           img: p.img,
-          images: [p.img, 'images/apartment.png', 'images/villa.png'],
+          images: [p.img, resolveImageUrl('images/apartment.png'), resolveImageUrl('images/villa.png')],
           beds: p.beds,
           baths: p.baths,
           area: p.area,
@@ -48,8 +49,8 @@ export function getInitialSeedData() {
     price: item.price || 'AED 1,500,000',
     paymentPlan: item.paymentPlan || '70/30',
     completion: item.completion || 'Q4 2026',
-    img: item.img || 'images/offplan.png',
-    images: Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.img || 'images/offplan.png', 'images/penthouse.png', 'images/villa.png'],
+    img: resolveImageUrl(item.img || 'images/offplan.png'),
+    images: Array.isArray(item.images) && item.images.length > 0 ? item.images.map(resolveImageUrl) : [resolveImageUrl(item.img || 'images/offplan.png'), resolveImageUrl('images/penthouse.png'), resolveImageUrl('images/villa.png')],
     beds: Number(item.beds) || 2,
     baths: Number(item.baths) || 2,
     area: String(item.area || '1,400'),
@@ -178,11 +179,12 @@ export async function fetchOffPlanProjectsFromSupabase() {
 
 // Strip base64 data URIs from images — keeps only URL-based paths
 function stripBase64Images(projects) {
+  const fallbackImg = resolveImageUrl('images/offplan.png');
   return projects.map(p => ({
     ...p,
-    img: p.img && p.img.startsWith('data:') ? 'images/offplan.png' : p.img,
+    img: p.img && p.img.startsWith('data:') ? fallbackImg : p.img,
     images: Array.isArray(p.images)
-      ? p.images.map(url => (url && url.startsWith('data:') ? 'images/offplan.png' : url))
+      ? p.images.map(url => (url && url.startsWith('data:') ? fallbackImg : url))
       : p.images,
     // Strip base64 PDF if too large — keep PDF name but clear the data
     pdfUrl: p.pdfUrl && p.pdfUrl.startsWith('data:') && p.pdfUrl.length > 500000
@@ -227,8 +229,8 @@ export async function addOffPlanProject(newProject) {
     id,
     offplan: true,
     createdDate: new Date().toISOString(),
-    img: newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png',
-    images: newProject.images && newProject.images.length > 0 ? newProject.images : [newProject.img || 'images/offplan.png']
+    img: resolveImageUrl(newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png'),
+    images: newProject.images && newProject.images.length > 0 ? newProject.images.map(resolveImageUrl) : [resolveImageUrl(newProject.img || 'images/offplan.png')]
   };
   const updated = [formatted, ...current];
   saveOffPlanProjects(updated);

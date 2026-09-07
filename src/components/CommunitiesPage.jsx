@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GlobalFooter from './Footer';
 import { COMMUNITIES } from '../data';
+import { resolveImageUrl } from '../utils/wpMedia';
 import {
   ChevronRight,
   ArrowRight,
@@ -65,7 +66,7 @@ function ParallaxImage({ src, alt, speed = 0.25, className = '', height = '480px
   );
 }
 
-const EXPANDED_COMMUNITIES = [
+const RAW_EXPANDED_COMMUNITIES = [
   {
     id: 'downtown',
     name: 'Downtown Dubai',
@@ -165,6 +166,11 @@ const EXPANDED_COMMUNITIES = [
     ]
   }
 ];
+
+const EXPANDED_COMMUNITIES = RAW_EXPANDED_COMMUNITIES.map(c => ({
+  ...c,
+  img: resolveImageUrl(c.img)
+}));
 
 export default function CommunitiesPage({ onNavigate }) {
   const [scrollY, setScrollY] = useState(0);

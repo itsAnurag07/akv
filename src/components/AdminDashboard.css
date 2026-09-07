@@ -775,3 +775,91 @@
     font-size: 28px;
   }
 }
+
+/* ── WordPress Media Upload Banner & Gallery Styles ── */
+.admin-wp-upload-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.15) 0%, rgba(20, 24, 33, 0.8) 100%);
+  border: 1px solid var(--c-gold);
+  border-radius: 10px;
+  margin-top: 14px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.wp-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.wp-gallery-item {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  background: #1e293b;
+  transition: all 0.2s ease;
+}
+
+.wp-gallery-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--c-gold);
+  box-shadow: 0 4px 14px rgba(197, 160, 89, 0.3);
+}
+
+.wp-gallery-item.selected {
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 2px var(--c-gold);
+}
+
+.wp-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wp-gallery-item-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--c-gold);
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.wp-gallery-item-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  padding: 8px 6px 4px;
+  font-size: 11px;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

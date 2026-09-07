@@ -2,7 +2,9 @@
 // AKV GLOBAL CONSULTANT — Property & Community Data
 // ============================================================
 
-export const PROPERTIES = [
+import { resolveImageUrl } from './utils/wpMedia';
+
+const RAW_PROPERTIES = [
   {
     id: 1,
     type: 'Penthouse',
@@ -184,8 +186,9 @@ export const PROPERTIES = [
     category: 'Townhouse',
   },
 ];
+export const PROPERTIES = RAW_PROPERTIES.map(p => ({ ...p, img: resolveImageUrl(p.img) }));
 
-export const OFFPLAN = [
+const RAW_OFFPLAN = [
   {
     id: 'op1',
     name: 'Elara at The Valley',
@@ -275,8 +278,9 @@ export const OFFPLAN = [
     beds: 4, baths: 4, area: '2,200',
   },
 ];
+export const OFFPLAN = RAW_OFFPLAN.map(p => ({ ...p, img: resolveImageUrl(p.img) }));
 
-export const COMMUNITIES = [
+const RAW_COMMUNITIES = [
   {
     id: 'downtown',
     name: 'Downtown Dubai',
@@ -358,12 +362,14 @@ export const COMMUNITIES = [
     ],
   },
 ];
+export const COMMUNITIES = RAW_COMMUNITIES.map(c => ({ ...c, img: resolveImageUrl(c.img) }));
 
-export const INSIGHTS = [
+const RAW_INSIGHTS = [
   { id: 1, cat: 'Market Update', date: 'July 2025', title: 'Dubai Real Estate Achieves Record Transaction Volumes in H1 2025', img: 'images/downtown_dubai.png' },
   { id: 2, cat: 'Investment Guide', date: 'June 2025', title: 'Off-Plan vs. Ready Properties: Where Should You Invest in 2025?', img: 'images/offplan.png' },
   { id: 3, cat: 'Community Guide', date: 'May 2025', title: 'Dubai Hills Estate: The Complete Buyer\'s Guide for 2025', img: 'images/villa.png' },
 ];
+export const INSIGHTS = RAW_INSIGHTS.map(i => ({ ...i, img: resolveImageUrl(i.img) }));
 
 export const TESTIMONIALS = [
   {
