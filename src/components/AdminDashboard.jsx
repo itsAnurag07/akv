@@ -34,7 +34,7 @@ const STOCK_PRESET_IMAGES = [
   'images/dubai_marina.png'
 ];
 
-export default function AdminDashboard({ onNavigate, onLogout }) {
+export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange }) {
   const [projects, setProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDeveloper, setFilterDeveloper] = useState('');
@@ -232,66 +232,80 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
   };
 
   // Handle Form Submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.location.trim()) {
       alert('Please fill in Project Name and Location.');
       return;
     }
 
-    const finalDeveloper = formData.developer === 'Other' ? (formData.customDeveloper || 'Leading Developer') : formData.developer;
-    const amenitiesArray = formData.amenities.split(',').map(a => a.trim()).filter(Boolean);
-    const finalImages = formData.images.length > 0 ? formData.images : ['images/offplan.png'];
+    try {
+      const finalDeveloper = formData.developer === 'Other' ? (formData.customDeveloper || 'Leading Developer') : formData.developer;
+      const amenitiesArray = formData.amenities.split(',').map(a => a.trim()).filter(Boolean);
+      const finalImages = formData.images.length > 0 ? formData.images : ['images/offplan.png'];
+      const priceStr = String(formData.price || '').trim();
 
-    const projectPayload = {
-      name: formData.name,
-      developer: finalDeveloper,
-      location: formData.location,
-      price: formData.price.startsWith('AED') ? formData.price : `AED ${formData.price}`,
-      paymentPlan: formData.paymentPlan,
-      completion: formData.completion,
-      category: formData.category,
-      type: `Off-Plan ${formData.category}`,
-      beds: Number(formData.beds),
-      baths: Number(formData.baths),
-      area: String(formData.area),
-      desc: formData.desc,
-      amenities: amenitiesArray,
-      img: finalImages[0],
-      images: finalImages,
-      community: formData.location,
-      pdfUrl: formData.pdfUrl || '',
-      pdfName: formData.pdfName || ''
-    };
+      const projectPayload = {
+        name: formData.name,
+        developer: finalDeveloper,
+        location: formData.location,
+        price: priceStr.startsWith('AED') ? priceStr : (priceStr ? `AED ${priceStr}` : 'Price on Request'),
+        paymentPlan: formData.paymentPlan,
+        completion: formData.completion,
+        category: formData.category,
+        type: `Off-Plan ${formData.category}`,
+        beds: Number(formData.beds),
+        baths: Number(formData.baths),
+        area: String(formData.area),
+        desc: formData.desc,
+        amenities: amenitiesArray,
+        img: finalImages[0],
+        images: finalImages,
+        community: formData.location,
+        pdfUrl: formData.pdfUrl || '',
+        pdfName: formData.pdfName || ''
+      };
 
-    if (modalMode === 'create') {
-      const updatedList = addOffPlanProject(projectPayload);
-      setProjects(updatedList);
-      showToast(`Project "${formData.name}" added successfully!`);
-    } else {
-      const updatedList = updateOffPlanProject(editingId, projectPayload);
-      setProjects(updatedList);
-      showToast(`Project "${formData.name}" updated successfully!`);
+      if (modalMode === 'create') {
+        const updatedList = await addOffPlanProject(projectPayload);
+        const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
+        setProjects(finalList);
+        if (onProjectsChange) onProjectsChange(finalList);
+        showToast(`Project "${formData.name}" added successfully!`);
+      } else {
+        const updatedList = await updateOffPlanProject(editingId, projectPayload);
+        const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
+        setProjects(finalList);
+        if (onProjectsChange) onProjectsChange(finalList);
+        showToast(`Project "${formData.name}" updated successfully!`);
+      }
+
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Save failed:', err);
+      alert(`Save failed: ${err.message}. Please try again or reduce image sizes.`);
     }
-
-    setIsModalOpen(false);
   };
 
   // Delete Project Execution
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteConfirmId) return;
     const target = projects.find(p => p.id === deleteConfirmId);
-    const updatedList = deleteOffPlanProject(deleteConfirmId);
-    setProjects(updatedList);
+    const updatedList = await deleteOffPlanProject(deleteConfirmId);
+    const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
+    setProjects(finalList);
+    if (onProjectsChange) onProjectsChange(finalList);
     setDeleteConfirmId(null);
     showToast(`Project "${target ? target.name : 'Project'}" deleted.`);
   };
 
   // Reset to Defaults
-  const handleResetDefaults = () => {
+  const handleResetDefaults = async () => {
     if (window.confirm('Are you sure you want to reset all off-plan projects to initial defaults? Custom added projects will be removed.')) {
-      const resetList = resetOffPlanProjects();
-      setProjects(resetList);
+      const resetList = await resetOffPlanProjects();
+      const finalList = Array.isArray(resetList) ? resetList : getOffPlanProjects();
+      setProjects(finalList);
+      if (onProjectsChange) onProjectsChange(finalList);
       showToast('All Off-Plan projects reset to defaults.');
     }
   };

@@ -154,8 +154,14 @@ export async function fetchOffPlanProjectsFromSupabase() {
 
     if (data && data.length > 0) {
       const formatted = data.map(mapFromSupabase);
-      saveOffPlanProjects(formatted); // Sync to local storage
-      return formatted;
+      // Merge: keep any localStorage-only projects not yet synced to Supabase
+      // This prevents race conditions where a just-added project gets wiped
+      const local = getOffPlanProjects();
+      const supabaseIds = new Set(formatted.map(p => String(p.id)));
+      const localOnly = local.filter(p => !supabaseIds.has(String(p.id)));
+      const merged = [...localOnly, ...formatted];
+      saveOffPlanProjects(merged);
+      return merged;
     } else {
       // If table is empty, seed it to Supabase
       const seedData = getInitialSeedData();
@@ -170,12 +176,45 @@ export async function fetchOffPlanProjectsFromSupabase() {
   }
 }
 
+// Strip base64 data URIs from images — keeps only URL-based paths
+function stripBase64Images(projects) {
+  return projects.map(p => ({
+    ...p,
+    img: p.img && p.img.startsWith('data:') ? 'images/offplan.png' : p.img,
+    images: Array.isArray(p.images)
+      ? p.images.map(url => (url && url.startsWith('data:') ? 'images/offplan.png' : url))
+      : p.images,
+    // Strip base64 PDF if too large — keep PDF name but clear the data
+    pdfUrl: p.pdfUrl && p.pdfUrl.startsWith('data:') && p.pdfUrl.length > 500000
+      ? '' : (p.pdfUrl || ''),
+  }));
+}
+
 // Save complete list to localStorage
 export function saveOffPlanProjects(projects) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
   } catch (err) {
-    console.error('Failed to save off-plan projects to localStorage:', err);
+    // QuotaExceededError — strip large base64 blobs and retry
+    if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
+      console.warn('localStorage quota exceeded — stripping base64 images and retrying...');
+      try {
+        const stripped = stripBase64Images(projects);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
+        console.info('Saved successfully after stripping base64 images.');
+      } catch (retryErr) {
+        console.error('Still failed after stripping base64 images:', retryErr);
+        // Last resort: save only metadata without images
+        try {
+          const minimal = projects.map(p => ({ ...p, img: 'images/offplan.png', images: ['images/offplan.png'], pdfUrl: '' }));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(minimal));
+        } catch (finalErr) {
+          console.error('Unable to save to localStorage at all:', finalErr);
+        }
+      }
+    } else {
+      console.error('Failed to save off-plan projects to localStorage:', err);
+    }
   }
 }
 

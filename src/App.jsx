@@ -538,13 +538,41 @@ function App() {
     setCurrentPage('home');
   };
 
-  // Refresh offplan data whenever navigating
+  // On initial mount: load from localStorage first, then sync from Supabase once
   useEffect(() => {
     setOffPlanProjects(getOffPlanProjects());
     fetchOffPlanProjectsFromSupabase().then(data => {
-      if (Array.isArray(data)) setOffPlanProjects(data);
+      if (Array.isArray(data) && data.length > 0) setOffPlanProjects(data);
     });
+  }, []); // Only on mount — NOT on every page change
+
+  // Refresh offplan data whenever navigating (localStorage only — no Supabase race)
+  useEffect(() => {
+    setOffPlanProjects(getOffPlanProjects());
   }, [currentPage]);
+
+  // Poll localStorage every 800ms to catch same-tab admin changes in real-time
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (!e || !e.key || e.key === 'akv_offplan_projects_v1') {
+        setOffPlanProjects(getOffPlanProjects());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    let lastSnapshot = JSON.stringify(getOffPlanProjects().map(p => p.id));
+    const interval = setInterval(() => {
+      const fresh = getOffPlanProjects();
+      const snapshot = JSON.stringify(fresh.map(p => p.id));
+      if (snapshot !== lastSnapshot) {
+        lastSnapshot = snapshot;
+        setOffPlanProjects(fresh);
+      }
+    }, 800);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   // Navbar and Menu states
   const [isScrolled, setIsScrolled] = useState(false);
@@ -1346,7 +1374,7 @@ function App() {
 
       {currentPage === 'admin' && (
         isAdminAuthenticated ? (
-          <AdminDashboard onNavigate={navigate} onLogout={handleAdminLogout} />
+          <AdminDashboard onNavigate={navigate} onLogout={handleAdminLogout} onProjectsChange={setOffPlanProjects} />
         ) : (
           <AdminLogin
             onLoginSuccess={() => setIsAdminAuthenticated(true)}
