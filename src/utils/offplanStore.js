@@ -237,9 +237,14 @@ export async function addOffPlanProject(newProject) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.from('offplan_projects').insert(mapToSupabase(formatted));
+      const { data, error } = await supabase.from('offplan_projects').insert(mapToSupabase(formatted)).select();
+      if (error) {
+        console.error('Supabase insert error details:', error);
+      } else {
+        console.info('Supabase cloud insert success:', data);
+      }
     } catch (err) {
-      console.error('Supabase insert error:', err);
+      console.error('Supabase insert exception:', err);
     }
   }
 
@@ -271,12 +276,17 @@ export async function updateOffPlanProject(id, updatedData) {
 
   if (isSupabaseConfigured && supabase && updatedItem) {
     try {
-      await supabase
+      const { error } = await supabase
         .from('offplan_projects')
         .update(mapToSupabase(updatedItem))
         .eq('id', String(id));
+      if (error) {
+        console.error('Supabase update error details:', error);
+      } else {
+        console.info('Supabase cloud update success for ID:', id);
+      }
     } catch (err) {
-      console.error('Supabase update error:', err);
+      console.error('Supabase update exception:', err);
     }
   }
 
@@ -291,9 +301,14 @@ export async function deleteOffPlanProject(id) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.from('offplan_projects').delete().eq('id', String(id));
+      const { error } = await supabase.from('offplan_projects').delete().eq('id', String(id));
+      if (error) {
+        console.error('Supabase delete error details:', error);
+      } else {
+        console.info('Supabase cloud delete success for ID:', id);
+      }
     } catch (err) {
-      console.error('Supabase delete error:', err);
+      console.error('Supabase delete exception:', err);
     }
   }
 
@@ -311,6 +326,7 @@ export async function resetOffPlanProjects() {
       for (const item of seedData) {
         await supabase.from('offplan_projects').upsert(mapToSupabase(item));
       }
+      console.info('Supabase reset to defaults completed.');
     } catch (err) {
       console.error('Supabase reset error:', err);
     }
