@@ -2,6 +2,9 @@
    AKV GLOBAL CONSULTANCY — Admin Dashboard Styles
    ============================================================ */
 
+@keyframes admin-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spin-icon { animation: admin-spin 1s linear infinite; }
+
 .admin-page {
   min-height: 100vh;
   background-color: #0b0e14;

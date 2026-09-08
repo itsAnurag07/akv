@@ -176,44 +176,56 @@ export async function fetchOffPlanProjectsFromSupabase() {
   }
 }
 
-// Strip base64 data URIs from images — keeps only URL-based paths
-function stripBase64Images(projects) {
+// Strip base64 data URIs — ALWAYS called before localStorage save
+// Base64 PDFs can be 5-10MB which exceeds localStorage's ~5MB limit
+function stripBase64ForStorage(projects) {
   return projects.map(p => ({
     ...p,
-    img: p.img && p.img.startsWith('data:') ? 'images/offplan.png' : p.img,
-    images: Array.isArray(p.images)
-      ? p.images.map(url => (url && url.startsWith('data:') ? 'images/offplan.png' : url))
-      : p.images,
-    // Strip base64 PDF if too large — keep PDF name but clear the data
-    pdfUrl: p.pdfUrl && p.pdfUrl.startsWith('data:') && p.pdfUrl.length > 500000
-      ? '' : (p.pdfUrl || ''),
+    // Keep base64 images so they display when Supabase upload fails
+    img: p.img,
+    images: p.images,
+    // ALWAYS strip base64 PDFs from localStorage — they are stored in Supabase Storage instead
+    pdfUrl: p.pdfUrl && p.pdfUrl.startsWith('data:') ? '' : (p.pdfUrl || ''),
   }));
 }
 
-// Save complete list to localStorage
+// Upload a base64 PDF to Supabase Storage, returns the public URL
+async function uploadPdfToStorage(base64DataUrl, fileName) {
+  if (!isSupabaseConfigured || !supabase) return '';
+  try {
+    // Convert base64 data URL to Blob
+    const res = await fetch(base64DataUrl);
+    const blob = await res.blob();
+    const safeName = `brochures/${Date.now()}_${fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const { data, error } = await supabase.storage
+      .from('property-images')
+      .upload(safeName, blob, { contentType: 'application/pdf', upsert: true });
+    if (error) {
+      console.error('PDF upload to storage failed:', error.message);
+      return '';
+    }
+    const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(safeName);
+    return urlData?.publicUrl || '';
+  } catch (err) {
+    console.error('PDF storage upload error:', err);
+    return '';
+  }
+}
+
+// Save complete list to localStorage (always strips base64 to avoid quota issues)
 export function saveOffPlanProjects(projects) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    // Always strip base64 before saving — prevents QuotaExceededError
+    const safeProjects = stripBase64ForStorage(projects);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(safeProjects));
   } catch (err) {
-    // QuotaExceededError — strip large base64 blobs and retry
-    if (err && (err.name === 'QuotaExceededError' || err.code === 22)) {
-      console.warn('localStorage quota exceeded — stripping base64 images and retrying...');
-      try {
-        const stripped = stripBase64Images(projects);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
-        console.info('Saved successfully after stripping base64 images.');
-      } catch (retryErr) {
-        console.error('Still failed after stripping base64 images:', retryErr);
-        // Last resort: save only metadata without images
-        try {
-          const minimal = projects.map(p => ({ ...p, img: 'images/offplan.png', images: ['images/offplan.png'], pdfUrl: '' }));
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(minimal));
-        } catch (finalErr) {
-          console.error('Unable to save to localStorage at all:', finalErr);
-        }
-      }
-    } else {
-      console.error('Failed to save off-plan projects to localStorage:', err);
+    console.error('Failed to save off-plan projects to localStorage:', err);
+    // Last resort: save only metadata without images
+    try {
+      const minimal = projects.map(p => ({ ...p, img: 'images/offplan.png', images: ['images/offplan.png'], pdfUrl: '' }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(minimal));
+    } catch (finalErr) {
+      console.error('Unable to save to localStorage at all:', finalErr);
     }
   }
 }
@@ -230,12 +242,55 @@ export async function addOffPlanProject(newProject) {
     img: newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png',
     images: newProject.images && newProject.images.length > 0 ? newProject.images : [newProject.img || 'images/offplan.png']
   };
+
+  // If PDF is a base64 data URL, upload to Supabase Storage first
+  if (formatted.pdfUrl && formatted.pdfUrl.startsWith('data:')) {
+    const storedUrl = await uploadPdfToStorage(formatted.pdfUrl, formatted.pdfName || 'brochure.pdf');
+    if (storedUrl) {
+      formatted.pdfUrl = storedUrl;
+    }
+    // If upload failed, keep the base64 for Supabase DB but it'll be stripped from localStorage
+  }
+
+  // Upload base64 images to Supabase Storage
+  if (isSupabaseConfigured && supabase && Array.isArray(formatted.images)) {
+    const uploadedImages = [];
+    for (const imgUrl of formatted.images) {
+      if (imgUrl && imgUrl.startsWith('data:')) {
+        try {
+          const res = await fetch(imgUrl);
+          const blob = await res.blob();
+          const ext = blob.type.split('/')[1] || 'png';
+          const safeName = `projects/${id}_${Date.now()}_${uploadedImages.length}.${ext}`;
+          const { error } = await supabase.storage
+            .from('property-images')
+            .upload(safeName, blob, { contentType: blob.type, upsert: true });
+          if (!error) {
+            const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(safeName);
+            uploadedImages.push(urlData?.publicUrl || imgUrl);
+          } else {
+            uploadedImages.push(imgUrl);
+          }
+        } catch {
+          uploadedImages.push(imgUrl);
+        }
+      } else {
+        uploadedImages.push(imgUrl);
+      }
+    }
+    formatted.images = uploadedImages;
+    formatted.img = uploadedImages[0] || formatted.img;
+  }
+
   const updated = [formatted, ...current];
   saveOffPlanProjects(updated);
 
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.from('offplan_projects').insert(mapToSupabase(formatted));
+      const { error } = await supabase.from('offplan_projects').insert(mapToSupabase(formatted));
+      if (error) {
+        console.error('Supabase insert error:', error.message);
+      }
     } catch (err) {
       console.error('Supabase insert error:', err);
     }
@@ -248,6 +303,45 @@ export async function addOffPlanProject(newProject) {
 export async function updateOffPlanProject(id, updatedData) {
   const current = getOffPlanProjects();
   let updatedItem = null;
+
+  // Handle PDF upload if it's a new base64 PDF
+  if (updatedData.pdfUrl && updatedData.pdfUrl.startsWith('data:')) {
+    const storedUrl = await uploadPdfToStorage(updatedData.pdfUrl, updatedData.pdfName || 'brochure.pdf');
+    if (storedUrl) {
+      updatedData.pdfUrl = storedUrl;
+    }
+  }
+
+  // Handle image uploads — convert base64 to Supabase Storage URLs
+  if (isSupabaseConfigured && supabase && Array.isArray(updatedData.images)) {
+    const uploadedImages = [];
+    for (const imgUrl of updatedData.images) {
+      if (imgUrl && imgUrl.startsWith('data:')) {
+        try {
+          const res = await fetch(imgUrl);
+          const blob = await res.blob();
+          const ext = blob.type.split('/')[1] || 'png';
+          const safeName = `projects/${id}_${Date.now()}_${uploadedImages.length}.${ext}`;
+          const { error } = await supabase.storage
+            .from('property-images')
+            .upload(safeName, blob, { contentType: blob.type, upsert: true });
+          if (!error) {
+            const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(safeName);
+            uploadedImages.push(urlData?.publicUrl || imgUrl);
+          } else {
+            uploadedImages.push(imgUrl);
+          }
+        } catch {
+          uploadedImages.push(imgUrl);
+        }
+      } else {
+        uploadedImages.push(imgUrl);
+      }
+    }
+    updatedData.images = uploadedImages;
+    updatedData.img = uploadedImages[0] || updatedData.img;
+  }
+
   const updated = current.map(item => {
     if (String(item.id) === String(id)) {
       const mergedItem = {
@@ -269,10 +363,11 @@ export async function updateOffPlanProject(id, updatedData) {
 
   if (isSupabaseConfigured && supabase && updatedItem) {
     try {
-      await supabase
+      const { error } = await supabase
         .from('offplan_projects')
         .update(mapToSupabase(updatedItem))
         .eq('id', String(id));
+      if (error) console.error('Supabase update error:', error.message);
     } catch (err) {
       console.error('Supabase update error:', err);
     }

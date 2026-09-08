@@ -51,6 +51,9 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
   
   // Toast Notification state
   const [toastMessage, setToastMessage] = useState('');
+
+  // Saving state for async upload feedback
+  const [isSaving, setIsSaving] = useState(false);
   
   // Form State
   const [formData, setFormData] = useState({
@@ -239,6 +242,7 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
       return;
     }
 
+    setIsSaving(true);
     try {
       const finalDeveloper = formData.developer === 'Other' ? (formData.customDeveloper || 'Leading Developer') : formData.developer;
       const amenitiesArray = formData.amenities.split(',').map(a => a.trim()).filter(Boolean);
@@ -283,7 +287,9 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
       setIsModalOpen(false);
     } catch (err) {
       console.error('Save failed:', err);
-      alert(`Save failed: ${err.message}. Please try again or reduce image sizes.`);
+      showToast(`Save failed: ${err.message}. Try reducing image/PDF sizes.`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -882,9 +888,13 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                 <button type="button" className="btn-admin-secondary" onClick={() => setIsModalOpen(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn-admin-primary">
-                  <CheckCircle size={16} />
-                  {modalMode === 'create' ? 'Publish Project' : 'Save Changes'}
+                <button type="submit" className="btn-admin-primary" disabled={isSaving}>
+                  {isSaving ? (
+                    <><RefreshCw size={16} className="spin-icon" /> Saving...</>
+                  ) : (
+                    <><CheckCircle size={16} />
+                    {modalMode === 'create' ? 'Publish Project' : 'Save Changes'}</>
+                  )}
                 </button>
               </div>
             </form>

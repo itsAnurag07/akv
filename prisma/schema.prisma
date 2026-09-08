@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model inquiries {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  email       String
+  phone       String?
+  message     String?
+  property_id String?
+  status      String?   @default("new")
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model offplan_projects {
+  id           String    @id
+  name         String
+  developer    String?   @default("Emaar Properties")
+  location     String?   @default("Dubai")
+  price        String?   @default("AED 1,500,000")
+  payment_plan String?   @default("70/30")
+  completion   String?   @default("Q4 2026")
+  img          String?   @default("images/offplan.png")
+  images       Json?     @default("[]")
+  beds         Int?      @default(2)
+  baths        Int?      @default(2)
+  area         String?   @default("1,400")
+  type         String?   @default("Off-Plan Apartment")
+  category     String?   @default("Apartment")
+  description  String?
+  amenities    Json?     @default("[]")
+  community    String?   @default("Dubai")
+  offplan      Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+}
