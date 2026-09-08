@@ -1,12 +1,27 @@
 // ============================================================
 // AKV GLOBAL CONSULTANCY — Off-Plan Data Store & Storage Manager
-// Dual-mode: Supports Supabase Cloud DB with LocalStorage fallback
+// Direct Cloud Mode: Supabase DB is the Single Source of Truth
+// LocalStorage is permanently disabled/purged to prevent device discrepancies
 // ============================================================
 import { OFFPLAN, PROPERTIES } from '../data';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { resolveImageUrl } from './wpMedia';
 
 const STORAGE_KEY = 'akv_offplan_projects_v1';
+
+// Automatically flush and purge old legacy localStorage offplan caches across all devices
+if (typeof window !== 'undefined' && window.localStorage) {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('akv_offplan_projects');
+    localStorage.removeItem('akv_offplan_data');
+  } catch {
+    // Ignore restricted storage environments
+  }
+}
+
+// In-memory cache for fast synchronous renders
+let memoryCache = [];
 
 // Initial seed builder merging OFFPLAN array and any offplan PROPERTIES
 export function getInitialSeedData() {
@@ -112,35 +127,27 @@ function mapToSupabase(p) {
     amenities: p.amenities || [],
     community: p.community,
     offplan: true,
-    pdf_url: p.pdfUrl || '',
-    pdf_name: p.pdfName || '',
+    pdf_url: p.pdfUrl || null,
+    pdf_name: p.pdfName || null,
     updated_at: new Date().toISOString()
   };
 }
 
-// Retrieve off-plan projects (Sync/Async compatible)
+// Synchronous getter for in-memory cache
 export function getOffPlanProjects() {
-  // Always maintain local fallback synchronously for initial renders
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.error('Failed to read off-plan projects from localStorage:', err);
-  }
-
-  const seedData = getInitialSeedData();
-  saveOffPlanProjects(seedData);
-  return seedData;
+  return memoryCache;
 }
 
-// Async fetch from Supabase
+// In-memory updater (does NOT write to localStorage)
+export function saveOffPlanProjects(projects) {
+  memoryCache = projects || [];
+}
+
+// Async fetch directly from Supabase DB — No localStorage fallback or merge
 export async function fetchOffPlanProjectsFromSupabase() {
-  if (!isSupabaseConfigured || !supabase) return getOffPlanProjects();
+  if (!isSupabaseConfigured || !supabase) {
+    return memoryCache;
+  }
 
   try {
     const { data, error } = await supabase
@@ -150,63 +157,30 @@ export async function fetchOffPlanProjectsFromSupabase() {
 
     if (error) {
       console.error('Supabase fetch error:', error.message);
-      return getOffPlanProjects();
+      return memoryCache;
     }
 
     if (data && data.length > 0) {
       const formatted = data.map(mapFromSupabase);
-      // Merge: keep any localStorage-only projects not yet synced to Supabase
-      // This prevents race conditions where a just-added project gets wiped
-      const local = getOffPlanProjects();
-      const supabaseIds = new Set(formatted.map(p => String(p.id)));
-      const localOnly = local.filter(p => !supabaseIds.has(String(p.id)));
-      const merged = [...localOnly, ...formatted];
-      saveOffPlanProjects(merged);
-      return merged;
+      memoryCache = formatted;
+      return formatted;
     } else {
-      // If table is empty, seed it to Supabase
+      // If table is completely empty, seed it once
       const seedData = getInitialSeedData();
       for (const item of seedData) {
         await supabase.from('offplan_projects').upsert(mapToSupabase(item));
       }
+      memoryCache = seedData;
       return seedData;
     }
   } catch (err) {
     console.error('Error connecting to Supabase:', err);
-    return getOffPlanProjects();
+    return memoryCache;
   }
 }
 
-// Strip base64 data URIs — ALWAYS called before localStorage save
-function stripBase64ForStorage(projects) {
-  return projects.map(p => ({
-    ...p,
-    img: p.img,
-    images: p.images
-  }));
-}
-
-// Save complete list to localStorage (always strips base64 to avoid quota issues)
-export function saveOffPlanProjects(projects) {
-  try {
-    // Always strip base64 before saving — prevents QuotaExceededError
-    const safeProjects = stripBase64ForStorage(projects);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(safeProjects));
-  } catch (err) {
-    console.error('Failed to save off-plan projects to localStorage:', err);
-    // Last resort: save only metadata without images
-    try {
-      const minimal = projects.map(p => ({ ...p, img: 'images/offplan.png', images: ['images/offplan.png'], pdfUrl: '' }));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(minimal));
-    } catch (finalErr) {
-      console.error('Unable to save to localStorage at all:', finalErr);
-    }
-  }
-}
-
-// Create a new off-plan project
+// Create a new off-plan project directly in Supabase
 export async function addOffPlanProject(newProject) {
-  const current = getOffPlanProjects();
   const id = `op_custom_${Date.now()}`;
   const formatted = {
     ...newProject,
@@ -214,161 +188,72 @@ export async function addOffPlanProject(newProject) {
     offplan: true,
     createdDate: new Date().toISOString(),
     img: resolveImageUrl(newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png'),
-    images: newProject.images && newProject.images.length > 0 ? newProject.images.map(resolveImageUrl) : [resolveImageUrl(newProject.img || 'images/offplan.png')]
+    images: newProject.images && newProject.images.length > 0 
+      ? newProject.images.map(resolveImageUrl) 
+      : [resolveImageUrl(newProject.img || 'images/offplan.png')]
   };
 
-  // Upload base64 images to Supabase Storage
-  if (isSupabaseConfigured && supabase && Array.isArray(formatted.images)) {
-    const uploadedImages = [];
-    for (const imgUrl of formatted.images) {
-      if (imgUrl && imgUrl.startsWith('data:')) {
-        try {
-          const res = await fetch(imgUrl);
-          const blob = await res.blob();
-          const ext = blob.type.split('/')[1] || 'png';
-          const safeName = `projects/${id}_${Date.now()}_${uploadedImages.length}.${ext}`;
-          const { error } = await supabase.storage
-            .from('property-images')
-            .upload(safeName, blob, { contentType: blob.type, upsert: true });
-          if (!error) {
-            const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(safeName);
-            uploadedImages.push(urlData?.publicUrl || imgUrl);
-          } else {
-            uploadedImages.push(imgUrl);
-          }
-        } catch {
-          uploadedImages.push(imgUrl);
-        }
-      } else {
-        uploadedImages.push(imgUrl);
-      }
-    }
-    formatted.images = uploadedImages;
-    formatted.img = uploadedImages[0] || formatted.img;
-  }
-
-  const updated = [formatted, ...current];
-  saveOffPlanProjects(updated);
-
   if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase.from('offplan_projects').insert(mapToSupabase(formatted)).select();
-      if (error) {
-        console.error('Supabase insert error details:', error);
-        throw new Error(error.message || 'Supabase insert failed');
-      } else {
-        console.info('Supabase cloud insert success:', data);
-      }
-    } catch (err) {
-      console.error('Supabase insert exception:', err);
-      throw err;
+    const { error } = await supabase
+      .from('offplan_projects')
+      .insert(mapToSupabase(formatted));
+
+    if (error) {
+      console.error('Supabase insert error details:', error);
+      throw new Error(error.message || 'Supabase insert failed');
     }
   }
 
-  return updated;
+  return await fetchOffPlanProjectsFromSupabase();
 }
 
-// Update an existing off-plan project
+// Update an existing off-plan project directly in Supabase
 export async function updateOffPlanProject(id, updatedData) {
-  const current = getOffPlanProjects();
-  let updatedItem = null;
-
-  // Handle image uploads — convert base64 to Supabase Storage URLs
-  if (isSupabaseConfigured && supabase && Array.isArray(updatedData.images)) {
-    const uploadedImages = [];
-    for (const imgUrl of updatedData.images) {
-      if (imgUrl && imgUrl.startsWith('data:')) {
-        try {
-          const res = await fetch(imgUrl);
-          const blob = await res.blob();
-          const ext = blob.type.split('/')[1] || 'png';
-          const safeName = `projects/${id}_${Date.now()}_${uploadedImages.length}.${ext}`;
-          const { error } = await supabase.storage
-            .from('property-images')
-            .upload(safeName, blob, { contentType: blob.type, upsert: true });
-          if (!error) {
-            const { data: urlData } = supabase.storage.from('property-images').getPublicUrl(safeName);
-            uploadedImages.push(urlData?.publicUrl || imgUrl);
-          } else {
-            uploadedImages.push(imgUrl);
-          }
-        } catch {
-          uploadedImages.push(imgUrl);
-        }
-      } else {
-        uploadedImages.push(imgUrl);
-      }
+  if (isSupabaseConfigured && supabase) {
+    const mergedItem = {
+      ...updatedData,
+      id: String(id),
+      offplan: true,
+      updatedDate: new Date().toISOString()
+    };
+    if (mergedItem.images && mergedItem.images.length > 0) {
+      mergedItem.img = mergedItem.images[0];
     }
-    updatedData.images = uploadedImages;
-    updatedData.img = uploadedImages[0] || updatedData.img;
-  }
 
-  const updated = current.map(item => {
-    if (String(item.id) === String(id)) {
-      const mergedItem = {
-        ...item,
-        ...updatedData,
-        id: item.id,
-        offplan: true,
-        updatedDate: new Date().toISOString()
-      };
-      if (mergedItem.images && mergedItem.images.length > 0) {
-        mergedItem.img = mergedItem.images[0];
-      }
-      updatedItem = mergedItem;
-      return mergedItem;
-    }
-    return item;
-  });
-  saveOffPlanProjects(updated);
+    const { error } = await supabase
+      .from('offplan_projects')
+      .update(mapToSupabase(mergedItem))
+      .eq('id', String(id));
 
-  if (isSupabaseConfigured && supabase && updatedItem) {
-    try {
-      const { error } = await supabase
-        .from('offplan_projects')
-        .update(mapToSupabase(updatedItem))
-        .eq('id', String(id));
-      if (error) {
-        console.error('Supabase update error details:', error);
-        throw new Error(error.message || 'Supabase update failed');
-      } else {
-        console.info('Supabase cloud update success for ID:', id);
-      }
-    } catch (err) {
-      console.error('Supabase update exception:', err);
-      throw err;
+    if (error) {
+      console.error('Supabase update error details:', error);
+      throw new Error(error.message || 'Supabase update failed');
     }
   }
 
-  return updated;
+  return await fetchOffPlanProjectsFromSupabase();
 }
 
-// Delete an off-plan project
+// Delete an off-plan project directly in Supabase
 export async function deleteOffPlanProject(id) {
-  const current = getOffPlanProjects();
-  const updated = current.filter(item => String(item.id) !== String(id));
-  saveOffPlanProjects(updated);
-
   if (isSupabaseConfigured && supabase) {
-    try {
-      const { error } = await supabase.from('offplan_projects').delete().eq('id', String(id));
-      if (error) {
-        console.error('Supabase delete error details:', error);
-      } else {
-        console.info('Supabase cloud delete success for ID:', id);
-      }
-    } catch (err) {
-      console.error('Supabase delete exception:', err);
+    const { error } = await supabase
+      .from('offplan_projects')
+      .delete()
+      .eq('id', String(id));
+
+    if (error) {
+      console.error('Supabase delete error details:', error);
+      throw new Error(error.message || 'Supabase delete failed');
     }
   }
 
-  return updated;
+  return await fetchOffPlanProjectsFromSupabase();
 }
 
 // Reset data back to default seed dataset
 export async function resetOffPlanProjects() {
   const seedData = getInitialSeedData();
-  saveOffPlanProjects(seedData);
 
   if (isSupabaseConfigured && supabase) {
     try {
@@ -379,10 +264,11 @@ export async function resetOffPlanProjects() {
       console.info('Supabase reset to defaults completed.');
     } catch (err) {
       console.error('Supabase reset error:', err);
+      throw err;
     }
   }
 
-  return seedData;
+  return await fetchOffPlanProjectsFromSupabase();
 }
 
 // Submit Inquiry to Supabase

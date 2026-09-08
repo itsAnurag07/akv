@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   getOffPlanProjects,
+  fetchOffPlanProjectsFromSupabase,
   addOffPlanProject,
   updateOffPlanProject,
   deleteOffPlanProject,
@@ -57,6 +58,7 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
   // Saving state & Success modal
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccessProject, setSavedSuccessProject] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Toast Notification state
   const [toastMessage, setToastMessage] = useState('');
@@ -89,14 +91,22 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
 
   const fileInputRef = useRef(null);
 
-  // Load project list on mount
+  // Load project list on mount directly from Supabase DB
   useEffect(() => {
     loadProjects();
   }, []);
 
-  const loadProjects = () => {
-    const list = getOffPlanProjects();
-    setProjects(list);
+  const loadProjects = async () => {
+    setIsLoading(true);
+    try {
+      const list = await fetchOffPlanProjectsFromSupabase();
+      setProjects(list || []);
+      if (onProjectsChange) onProjectsChange(list || []);
+    } catch (err) {
+      console.error('Error fetching offplan projects from Supabase:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const showToast = (msg) => {

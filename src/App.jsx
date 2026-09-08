@@ -75,9 +75,9 @@ function PropertyCard({ property, large = false, onNavigate }) {
 }
 
 // Property Detail Page Component
-function PropertyDetailSection({ propertyId, onNavigate }) {
+function PropertyDetailSection({ propertyId, onNavigate, projects = [] }) {
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
-  const allOffplan = getOffPlanProjects();
+  const allOffplan = projects.length > 0 ? projects : getOffPlanProjects();
   const p = PROPERTIES.find(x => String(x.id) === String(propertyId)) || allOffplan.find(x => String(x.id) === String(propertyId));
   const galleryImages = (p.images && p.images.length > 0) ? p.images : [p.img || resolveImageUrl('images/offplan.png')];
   const [activeImgIndex, setActiveImgIndex] = useState(0);
@@ -539,40 +539,29 @@ function App() {
     setCurrentPage('home');
   };
 
-  // On initial mount: load from localStorage first, then sync from Supabase once
+  // On initial mount: fetch directly from Supabase DB
   useEffect(() => {
-    setOffPlanProjects(getOffPlanProjects());
     fetchOffPlanProjectsFromSupabase().then(data => {
-      if (Array.isArray(data) && data.length > 0) setOffPlanProjects(data);
+      if (Array.isArray(data)) setOffPlanProjects(data);
     });
-  }, []); // Only on mount — NOT on every page change
+  }, []);
 
-  // Refresh offplan data whenever navigating (localStorage only — no Supabase race)
+  // Sync latest projects whenever navigating between pages
   useEffect(() => {
-    setOffPlanProjects(getOffPlanProjects());
+    fetchOffPlanProjectsFromSupabase().then(data => {
+      if (Array.isArray(data)) setOffPlanProjects(data);
+    });
   }, [currentPage]);
 
-  // Poll localStorage every 800ms to catch same-tab admin changes in real-time
+  // When user returns to AKV Global tab/window, sync fresh from Supabase
   useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (!e || !e.key || e.key === 'akv_offplan_projects_v1') {
-        setOffPlanProjects(getOffPlanProjects());
-      }
+    const handleFocus = () => {
+      fetchOffPlanProjectsFromSupabase().then(data => {
+        if (Array.isArray(data)) setOffPlanProjects(data);
+      });
     };
-    window.addEventListener('storage', handleStorageChange);
-    let lastSnapshot = JSON.stringify(getOffPlanProjects().map(p => p.id));
-    const interval = setInterval(() => {
-      const fresh = getOffPlanProjects();
-      const snapshot = JSON.stringify(fresh.map(p => p.id));
-      if (snapshot !== lastSnapshot) {
-        lastSnapshot = snapshot;
-        setOffPlanProjects(fresh);
-      }
-    }, 800);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   // Navbar and Menu states
@@ -1340,7 +1329,7 @@ function App() {
       )}
 
       {currentPage === 'property' && (
-        <PropertyDetailSection propertyId={currentPropertyId} onNavigate={navigate} />
+        <PropertyDetailSection propertyId={currentPropertyId} onNavigate={navigate} projects={offPlanProjects} />
       )}
 
       {currentPage === 'community' && (
