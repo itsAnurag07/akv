@@ -7,6 +7,7 @@ import GlobalFooter from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import { getOffPlanProjects, fetchOffPlanProjectsFromSupabase } from './utils/offplanStore';
+import { resolveImageUrl } from './utils/wpMedia';
 import {
   MapPin, Bed, Bath, Maximize2, Building2, TrendingUp, Anchor,
   Waves, Star, ShoppingBag, UtensilsCrossed, Compass, Shield,
@@ -78,9 +79,9 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
   const allOffplan = getOffPlanProjects();
   const p = PROPERTIES.find(x => String(x.id) === String(propertyId)) || allOffplan.find(x => String(x.id) === String(propertyId));
-  const galleryImages = (p.images && p.images.length > 0) ? p.images : [p.img || 'images/offplan.png'];
+  const galleryImages = (p.images && p.images.length > 0) ? p.images : [p.img || resolveImageUrl('images/offplan.png')];
   const [activeImgIndex, setActiveImgIndex] = useState(0);
-  const activeMainImg = galleryImages[activeImgIndex] || p.img || 'images/offplan.png';
+  const activeMainImg = galleryImages[activeImgIndex] || p.img || resolveImageUrl('images/offplan.png');
 
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
@@ -296,14 +297,14 @@ function PropertyDetailSection({ propertyId, onNavigate }) {
               <div className="label" style={{ marginBottom: '16px' }}>Your Advisory Leadership</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)' }}>
-                  <img src="images/Paramdeep_new.png" alt="Paramdeep Singh" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
+                  <img src={resolveImageUrl('images/Paramdeep_new.png')} alt="Paramdeep Singh" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
                   <div>
                     <h4 style={{ margin: 0, fontSize: '13px', color: '#fff' }}>Paramdeep Singh</h4>
                     <div style={{ fontSize: '10px', color: 'var(--c-gold)', marginTop: '2px' }}>Co-Founder &amp; MD</div>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,175,55,0.2)' }}>
-                  <img src="images/Habib Khan.jpeg" alt="Habib Khan" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
+                  <img src={resolveImageUrl('images/Habib Khan.jpeg')} alt="Habib Khan" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--c-gold)' }} />
                   <div>
                     <h4 style={{ margin: 0, fontSize: '13px', color: '#fff' }}>Habib Khan</h4>
                     <div style={{ fontSize: '10px', color: 'var(--c-gold)', marginTop: '2px' }}>Operational &amp; Sales Head</div>
@@ -679,7 +680,7 @@ function App() {
         <div className="nav-inner">
           <div className="nav-logo" aria-label="AKV Global Consultant Home" onClick={() => navigate('home')}>
             <img
-              src="images/AKV final logo.png"
+              src={resolveImageUrl('images/AKV final logo.png')}
               alt="AKV Global"
               style={{ height: '52px', width: 'auto', objectFit: 'contain', display: 'block', paddingBottom: '6px', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.45))' }}
             />
@@ -719,7 +720,7 @@ function App() {
         <div className="mobile-menu-header">
           <div className="mobile-menu-logo" onClick={() => { setIsMobileMenuOpen(false); navigate('home'); }}>
             <img
-              src="images/AKV final logo.png"
+              src={resolveImageUrl('images/AKV final logo.png')}
               alt="AKV Global"
               style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
             />
@@ -779,7 +780,7 @@ function App() {
           {/* HERO */}
           <section id="hero">
             <div className="hero-video-bg">
-              <video autoPlay loop muted playsInline preload="auto" poster="/images/hero.png">
+              <video autoPlay loop muted playsInline preload="auto" poster={resolveImageUrl('images/hero.png')}>
                 <source src="https://akv.intelloft.in/wp-content/uploads/2026/08/AKV-Global-Consultant.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -940,7 +941,7 @@ function App() {
             <div className="container" style={{ padding: 0 }}>
               <div className="categories-grid">
                 <div className="category-card" onClick={() => { setListingTab('All'); setFilterType('Apartment'); setFilterLocation(''); navigate('listings'); }} style={{ background: '#1a1a1a' }}>
-                  <img src="images/penthouse.png" alt="Luxury Apartments Dubai" />
+                  <img src={resolveImageUrl('images/penthouse.png')} alt="Luxury Apartments Dubai" />
                   <div className="category-overlay">
                     <div className="category-title">Luxury Apartments</div>
                     <div className="category-count">248 Properties</div>
@@ -948,7 +949,7 @@ function App() {
                   </div>
                 </div>
                 <div className="category-card" onClick={() => { setListingTab('All'); setFilterType('Villa'); setFilterLocation(''); navigate('listings'); }} style={{ background: '#111' }}>
-                  <img src="images/villa.png" alt="Villas Dubai" />
+                  <img src={resolveImageUrl('images/villa.png')} alt="Villas Dubai" />
                   <div className="category-overlay">
                     <div className="category-title">Villas</div>
                     <div className="category-count">96 Properties</div>
@@ -956,7 +957,7 @@ function App() {
                   </div>
                 </div>
                 <div className="category-card" onClick={() => { setListingTab('All'); setFilterType('Penthouse'); setFilterLocation(''); navigate('listings'); }} style={{ background: '#0d0d0d' }}>
-                  <img src="images/penthouse.png" alt="Penthouses Dubai" />
+                  <img src={resolveImageUrl('images/penthouse.png')} alt="Penthouses Dubai" />
                   <div className="category-overlay">
                     <div className="category-title">Penthouses</div>
                     <div className="category-count">34 Properties</div>
@@ -964,7 +965,7 @@ function App() {
                   </div>
                 </div>
                 <div className="category-card" onClick={() => { setListingTab('All'); setFilterType('Townhouse'); setFilterLocation(''); navigate('listings'); }} style={{ background: '#131313' }}>
-                  <img src="images/villa.png" alt="Townhouses Dubai" />
+                  <img src={resolveImageUrl('images/villa.png')} alt="Townhouses Dubai" />
                   <div className="category-overlay">
                     <div className="category-title">Townhouses</div>
                     <div className="category-count">72 Properties</div>
@@ -972,7 +973,7 @@ function App() {
                   </div>
                 </div>
                 <div className="category-card" onClick={() => { setListingTab('Off-Plan'); setFilterType(''); setFilterLocation(''); navigate('listings'); }} style={{ background: '#0a0a0a' }}>
-                  <img src="images/offplan.png" alt="Off-Plan Dubai" />
+                  <img src={resolveImageUrl('images/offplan.png')} alt="Off-Plan Dubai" />
                   <div className="category-overlay">
                     <div className="category-title">Off-Plan</div>
                     <div className="category-count">120 Projects</div>
@@ -993,7 +994,7 @@ function App() {
 
               <div className="cities-grid">
                 <div className="city-card" onClick={() => navigate('community', 'marina')}>
-                  <img src="images/dubai_marina.png" alt="Dubai Marina" />
+                  <img src={resolveImageUrl('images/dubai_marina.png')} alt="Dubai Marina" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Dubai Marina</div>
                     <div className="city-card-properties">248 Properties</div>
@@ -1001,7 +1002,7 @@ function App() {
                 </div>
 
                 <div className="city-card" onClick={() => { setFilterLocation('Business Bay'); setListingTab('All'); setFilterType(''); navigate('listings'); }}>
-                  <img src="images/apartment.png" alt="Business Bay" />
+                  <img src={resolveImageUrl('images/apartment.png')} alt="Business Bay" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Business Bay</div>
                     <div className="city-card-properties">156 Properties</div>
@@ -1009,7 +1010,7 @@ function App() {
                 </div>
 
                 <div className="city-card" onClick={() => navigate('community', 'palm')}>
-                  <img src="images/palm_jumeirah.png" alt="Palm Jumeirah" />
+                  <img src={resolveImageUrl('images/palm_jumeirah.png')} alt="Palm Jumeirah" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Palm Jumeirah</div>
                     <div className="city-card-properties">96 Properties</div>
@@ -1017,7 +1018,7 @@ function App() {
                 </div>
 
                 <div className="city-card" onClick={() => navigate('community', 'downtown')}>
-                  <img src="images/downtown_dubai.png" alt="Downtown Dubai" />
+                  <img src={resolveImageUrl('images/downtown_dubai.png')} alt="Downtown Dubai" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Downtown Dubai</div>
                     <div className="city-card-properties">312 Properties</div>
@@ -1025,7 +1026,7 @@ function App() {
                 </div>
 
                 <div className="city-card" onClick={() => { setFilterLocation('Dubai Hills Estate'); setListingTab('All'); setFilterType(''); navigate('listings'); }}>
-                  <img src="images/villa.png" alt="Dubai Hills Estate" />
+                  <img src={resolveImageUrl('images/villa.png')} alt="Dubai Hills Estate" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Dubai Hills Estate</div>
                     <div className="city-card-properties">184 Properties</div>
@@ -1033,7 +1034,7 @@ function App() {
                 </div>
 
                 <div className="city-card" onClick={() => { setFilterLocation('Arabian Ranches'); setListingTab('All'); setFilterType(''); navigate('listings'); }}>
-                  <img src="images/about.png" alt="Arabian Ranches" />
+                  <img src={resolveImageUrl('images/about.png')} alt="Arabian Ranches" />
                   <div className="city-card-overlay">
                     <div className="city-card-name">Arabian Ranches</div>
                     <div className="city-card-properties">72 Properties</div>
@@ -1092,7 +1093,7 @@ function App() {
             <div className="container">
               <div className="about-bento-grid">
                 <div className="about-bento-card about-bento-card--image">
-                  <img src="images/apartment.png" alt="Modern Building Dubai" />
+                  <img src={resolveImageUrl('images/apartment.png')} alt="Modern Building Dubai" />
                 </div>
                 <div className="about-bento-card about-bento-card--content-stack">
                   <div className="about-bento-subcard about-bento-subcard--beige">
@@ -1107,7 +1108,7 @@ function App() {
                   </div>
                 </div>
                 <div className="about-bento-card about-bento-card--image">
-                  <img src="images/villa.png" alt="Luxury Villa Sunset Dubai" />
+                  <img src={resolveImageUrl('images/villa.png')} alt="Luxury Villa Sunset Dubai" />
                 </div>
               </div>
             </div>
@@ -1160,7 +1161,7 @@ function App() {
           <div className="final-cta-wrapper">
             <div className="final-cta">
               <div className="final-cta-left">
-                <img src="images/downtown_dubai.png" alt="Dubai Real Estate Skyline" loading="lazy" />
+                <img src={resolveImageUrl('images/downtown_dubai.png')} alt="Dubai Real Estate Skyline" loading="lazy" />
               </div>
               <div className="final-cta-content">
                 <h2 className="final-cta-title">Let's Make Your Property Dreams a Reality</h2>

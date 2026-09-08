@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GlobalFooter from './Footer';
 import { TESTIMONIALS } from '../data';
+import { resolveImageUrl } from '../utils/wpMedia';
 import {
   ChevronRight,
   ArrowRight,
@@ -88,7 +89,7 @@ export default function AboutPage({ onNavigate }) {
       role: 'Co-Founder & Managing Director',
       specialty: 'Ultra-Luxury Villas & Private Estates',
       bio: 'Senior Dubai luxury real estate specialist. Paramdeep co-founded AKV to bring institutional-grade investment strategy and private office level discretion to global investors.',
-      img: 'images/Paramdeep_new.png',
+      img: resolveImageUrl('images/Paramdeep_new.png'),
       link: 'https://www.linkedin.com/in/paramdeep-singh-0b3603428?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
     },
     {
@@ -97,7 +98,7 @@ export default function AboutPage({ onNavigate }) {
       specialty: 'Pre-Launch Penthouse & Developer Allocations',
       volume: 'AED 3.2B+ Closed',
       bio: 'Former senior advisor for tier-1 Dubai developers. Habib leads operations and sales at AKV to maintain direct priority access to off-market launches across Palm Jumeirah and Downtown Dubai.',
-      img: 'images/Habib Khan.jpeg',
+      img: resolveImageUrl('images/Habib Khan.jpeg'),
       link: 'https://www.linkedin.com/in/habib-khann/',
     },
   ];

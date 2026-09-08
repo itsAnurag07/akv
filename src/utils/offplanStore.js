@@ -4,6 +4,7 @@
 // ============================================================
 import { OFFPLAN, PROPERTIES } from '../data';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { resolveImageUrl } from './wpMedia';
 
 const STORAGE_KEY = 'akv_offplan_projects_v1';
 
@@ -24,7 +25,7 @@ export function getInitialSeedData() {
           paymentPlan: p.paymentPlan || '60/40',
           completion: p.completion || 'Q4 2026',
           img: p.img,
-          images: [p.img, 'images/apartment.png', 'images/villa.png'],
+          images: [p.img, resolveImageUrl('images/apartment.png'), resolveImageUrl('images/villa.png')],
           beds: p.beds,
           baths: p.baths,
           area: p.area,
@@ -48,8 +49,8 @@ export function getInitialSeedData() {
     price: item.price || 'AED 1,500,000',
     paymentPlan: item.paymentPlan || '70/30',
     completion: item.completion || 'Q4 2026',
-    img: item.img || 'images/offplan.png',
-    images: Array.isArray(item.images) && item.images.length > 0 ? item.images : [item.img || 'images/offplan.png', 'images/penthouse.png', 'images/villa.png'],
+    img: resolveImageUrl(item.img || 'images/offplan.png'),
+    images: Array.isArray(item.images) && item.images.length > 0 ? item.images.map(resolveImageUrl) : [resolveImageUrl(item.img || 'images/offplan.png'), resolveImageUrl('images/penthouse.png'), resolveImageUrl('images/villa.png')],
     beds: Number(item.beds) || 2,
     baths: Number(item.baths) || 2,
     area: String(item.area || '1,400'),
@@ -239,8 +240,8 @@ export async function addOffPlanProject(newProject) {
     id,
     offplan: true,
     createdDate: new Date().toISOString(),
-    img: newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png',
-    images: newProject.images && newProject.images.length > 0 ? newProject.images : [newProject.img || 'images/offplan.png']
+    img: resolveImageUrl(newProject.img || (newProject.images && newProject.images[0]) || 'images/offplan.png'),
+    images: newProject.images && newProject.images.length > 0 ? newProject.images.map(resolveImageUrl) : [resolveImageUrl(newProject.img || 'images/offplan.png')]
   };
 
   // If PDF is a base64 data URL, upload to Supabase Storage first
@@ -287,12 +288,14 @@ export async function addOffPlanProject(newProject) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      const { error } = await supabase.from('offplan_projects').insert(mapToSupabase(formatted));
+      const { data, error } = await supabase.from('offplan_projects').insert(mapToSupabase(formatted)).select();
       if (error) {
-        console.error('Supabase insert error:', error.message);
+        console.error('Supabase insert error details:', error);
+      } else {
+        console.info('Supabase cloud insert success:', data);
       }
     } catch (err) {
-      console.error('Supabase insert error:', err);
+      console.error('Supabase insert exception:', err);
     }
   }
 
@@ -367,9 +370,13 @@ export async function updateOffPlanProject(id, updatedData) {
         .from('offplan_projects')
         .update(mapToSupabase(updatedItem))
         .eq('id', String(id));
-      if (error) console.error('Supabase update error:', error.message);
+      if (error) {
+        console.error('Supabase update error details:', error);
+      } else {
+        console.info('Supabase cloud update success for ID:', id);
+      }
     } catch (err) {
-      console.error('Supabase update error:', err);
+      console.error('Supabase update exception:', err);
     }
   }
 
@@ -384,9 +391,14 @@ export async function deleteOffPlanProject(id) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase.from('offplan_projects').delete().eq('id', String(id));
+      const { error } = await supabase.from('offplan_projects').delete().eq('id', String(id));
+      if (error) {
+        console.error('Supabase delete error details:', error);
+      } else {
+        console.info('Supabase cloud delete success for ID:', id);
+      }
     } catch (err) {
-      console.error('Supabase delete error:', err);
+      console.error('Supabase delete exception:', err);
     }
   }
 
@@ -404,6 +416,7 @@ export async function resetOffPlanProjects() {
       for (const item of seedData) {
         await supabase.from('offplan_projects').upsert(mapToSupabase(item));
       }
+      console.info('Supabase reset to defaults completed.');
     } catch (err) {
       console.error('Supabase reset error:', err);
     }

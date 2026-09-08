@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Shield, Key, User, Lock, ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
 import './AdminDashboard.css';
+import { resolveImageUrl } from '../utils/wpMedia';
 
 export default function AdminLogin({ onLoginSuccess, onCancel }) {
   const [username, setUsername] = useState('');
@@ -41,7 +42,7 @@ export default function AdminLogin({ onLoginSuccess, onCancel }) {
         {/* Header Branding */}
         <div style={{ padding: '36px 36px 20px', textAlign: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <img
-            src="images/AKV final logo.png"
+            src={resolveImageUrl('images/AKV final logo.png')}
             alt="AKV Global"
             style={{ height: '48px', margin: '0 auto 16px', display: 'block', objectFit: 'contain' }}
           />

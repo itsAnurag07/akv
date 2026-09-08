@@ -14,8 +14,13 @@ import {
   Plus, Edit3, Trash2, Search, Building2, MapPin,
   Image as ImageIcon, UploadCloud, X, CheckCircle,
   RefreshCw, LayoutGrid, List, ArrowLeft, LogOut,
-  FileText
+  FileText, ExternalLink, Eye, Check
 } from 'lucide-react';
+import {
+  uploadImageToWordPress,
+  fetchWordPressMediaGallery,
+  resolveImageUrl
+} from '../utils/wpMedia';
 
 const DEVELOPER_OPTIONS = ['Emaar Properties', 'DAMAC Properties', 'Sobha Realty', 'Azizi Developments', 'Nakheel', 'Select Group', 'Deyaar'];
 const CATEGORY_OPTIONS = ['Apartment', 'Villa', 'Penthouse', 'Townhouse', 'Retail'];
@@ -32,7 +37,7 @@ const STOCK_PRESET_IMAGES = [
   'images/downtown_dubai.png',
   'images/palm_jumeirah.png',
   'images/dubai_marina.png'
-];
+].map(resolveImageUrl);
 
 export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange }) {
   const [projects, setProjects] = useState([]);
@@ -48,12 +53,20 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
   
   // Delete confirmation modal state
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  // Saving state & Success modal
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedSuccessProject, setSavedSuccessProject] = useState(null);
   
   // Toast Notification state
   const [toastMessage, setToastMessage] = useState('');
 
-  // Saving state for async upload feedback
-  const [isSaving, setIsSaving] = useState(false);
+  // WordPress Media Upload & Gallery Browser states
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadStatusText, setUploadStatusText] = useState('');
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [wpGallery, setWpGallery] = useState([]);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
   
   // Form State
   const [formData, setFormData] = useState({
@@ -159,26 +172,78 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
     setIsModalOpen(true);
   };
 
-  // Handle Image File Upload
-  const handleFileUpload = (e) => {
+  // Handle Image File Upload (Automatic WordPress Media Gallery Upload)
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
-    files.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const dataUrl = event.target.result;
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    const pdfFiles = files.filter(file => file.type === 'application/pdf' || file.name.endsWith('.pdf'));
+
+    // Handle PDF brochures
+    pdfFiles.forEach(file => handlePdfUploadFile(file));
+
+    // Upload images directly to WordPress Media Gallery
+    if (imageFiles.length > 0) {
+      setIsUploadingImage(true);
+      setUploadStatusText(`Preparing to upload ${imageFiles.length} image(s) to WordPress...`);
+
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        setUploadStatusText(`Uploading ${i + 1}/${imageFiles.length}: "${file.name}" to WordPress Gallery...`);
+        try {
+          const wpResult = await uploadImageToWordPress(file);
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, dataUrl]
+            images: [...prev.images, wpResult.url]
           }));
-        };
-        reader.readAsDataURL(file);
-      } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-        handlePdfUploadFile(file);
+          showToast(`Uploaded "${file.name}" to WordPress Gallery!`);
+        } catch (err) {
+          console.error('WordPress upload failed, saving locally:', err);
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            setFormData(prev => ({
+              ...prev,
+              images: [...prev.images, dataUrl]
+            }));
+          };
+          reader.readAsDataURL(file);
+          showToast(`Upload error for "${file.name}" — stored fallback.`);
+        }
       }
-    });
+      setIsUploadingImage(false);
+      setUploadStatusText('');
+    }
+
+    if (e.target) e.target.value = '';
+  };
+
+  // Open WordPress Media Library Gallery Picker
+  const handleOpenWpGallery = async () => {
+    setIsGalleryModalOpen(true);
+    setIsLoadingGallery(true);
+    try {
+      const items = await fetchWordPressMediaGallery({ perPage: 50 });
+      setWpGallery(items);
+    } catch (err) {
+      console.error('Error fetching WordPress gallery:', err);
+    } finally {
+      setIsLoadingGallery(false);
+    }
+  };
+
+  // Add an image from WordPress Gallery to the project
+  const handleSelectFromWpGallery = (url) => {
+    if (!formData.images.includes(url)) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, url]
+      }));
+      showToast('Image added from WordPress Gallery!');
+    } else {
+      showToast('Image is already selected in project gallery.');
+    }
   };
 
   // Dedicated PDF Brochure Upload Handler
@@ -237,54 +302,70 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
   // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSaving) return;
+
+    if (isUploadingImage) {
+      alert('Please wait for the current photo upload to finish before saving.');
+      return;
+    }
+
     if (!formData.name.trim() || !formData.location.trim()) {
       alert('Please fill in Project Name and Location.');
       return;
     }
 
     setIsSaving(true);
+
+
     try {
       const finalDeveloper = formData.developer === 'Other' ? (formData.customDeveloper || 'Leading Developer') : formData.developer;
       const amenitiesArray = formData.amenities.split(',').map(a => a.trim()).filter(Boolean);
-      const finalImages = formData.images.length > 0 ? formData.images : ['images/offplan.png'];
+      const finalImages = formData.images.length > 0 ? formData.images : [resolveImageUrl('images/offplan.png')];
       const priceStr = String(formData.price || '').trim();
 
       const projectPayload = {
-        name: formData.name,
+        name: formData.name.trim(),
         developer: finalDeveloper,
-        location: formData.location,
+        location: formData.location.trim(),
         price: priceStr.startsWith('AED') ? priceStr : (priceStr ? `AED ${priceStr}` : 'Price on Request'),
         paymentPlan: formData.paymentPlan,
         completion: formData.completion,
         category: formData.category,
         type: `Off-Plan ${formData.category}`,
-        beds: Number(formData.beds),
-        baths: Number(formData.baths),
+        beds: Number(formData.beds) || 2,
+        baths: Number(formData.baths) || 2,
         area: String(formData.area),
         desc: formData.desc,
         amenities: amenitiesArray,
         img: finalImages[0],
         images: finalImages,
-        community: formData.location,
+        community: formData.location.trim(),
         pdfUrl: formData.pdfUrl || '',
         pdfName: formData.pdfName || ''
       };
+
+      let savedItem = null;
 
       if (modalMode === 'create') {
         const updatedList = await addOffPlanProject(projectPayload);
         const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
         setProjects(finalList);
         if (onProjectsChange) onProjectsChange(finalList);
-        showToast(`Project "${formData.name}" added successfully!`);
+        savedItem = finalList[0] || { ...projectPayload, id: 'op_custom_' + Date.now() };
+        showToast(`Project "${formData.name}" published successfully!`);
       } else {
         const updatedList = await updateOffPlanProject(editingId, projectPayload);
         const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
         setProjects(finalList);
         if (onProjectsChange) onProjectsChange(finalList);
+        savedItem = finalList.find(p => String(p.id) === String(editingId)) || { ...projectPayload, id: editingId };
         showToast(`Project "${formData.name}" updated successfully!`);
       }
 
+      // Close create/edit modal and present success confirmation dialog
       setIsModalOpen(false);
+      setSavedSuccessProject(savedItem);
     } catch (err) {
       console.error('Save failed:', err);
       showToast(`Save failed: ${err.message}. Try reducing image/PDF sizes.`);
@@ -475,6 +556,13 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                   </div>
 
                   <div className="admin-card-actions">
+                    <button 
+                      className="btn-card-action btn-card-view" 
+                      onClick={() => onNavigate('property', p.id)}
+                      title="View live property detail page on website"
+                    >
+                      <Eye size={14} /> View Live
+                    </button>
                     <button className="btn-card-action btn-card-edit" onClick={() => handleOpenEditModal(p)}>
                       <Edit3 size={14} /> Edit
                     </button>
@@ -531,6 +619,14 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'inline-flex', gap: '8px' }}>
+                        <button 
+                          className="btn-card-action btn-card-view" 
+                          style={{ padding: '6px 12px' }} 
+                          onClick={() => onNavigate('property', p.id)}
+                          title="View live property detail page on website"
+                        >
+                          <Eye size={13} /> View Live
+                        </button>
                         <button className="btn-card-action btn-card-edit" style={{ padding: '6px 12px' }} onClick={() => handleOpenEditModal(p)}>
                           <Edit3 size={14} /> Edit
                         </button>
@@ -748,6 +844,17 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                       />
                     </div>
 
+                    {/* WordPress Active Upload Status Banner */}
+                    {isUploadingImage && (
+                      <div className="admin-wp-upload-banner">
+                        <RefreshCw size={20} className="spin" style={{ color: 'var(--c-gold)', flexShrink: 0 }} />
+                        <div>
+                          <div style={{ color: '#fff', fontWeight: 600, fontSize: '13px' }}>WordPress Media Upload Active</div>
+                          <div style={{ color: 'var(--c-gold)', fontSize: '12px' }}>{uploadStatusText}</div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* PDF Brochure Attachment Section */}
                     <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', marginBottom: '20px' }}>
                       <label className="admin-label" style={{ fontSize: '14px', color: 'var(--c-gold)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
@@ -830,6 +937,18 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                       </button>
                     </div>
 
+                    {/* WordPress Gallery Quick Picker Button */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+                      <button
+                        type="button"
+                        className="btn-admin-secondary"
+                        onClick={handleOpenWpGallery}
+                        style={{ borderColor: 'var(--c-gold)', color: 'var(--c-gold)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <ImageIcon size={15} /> Browse WordPress Media Gallery
+                      </button>
+                    </div>
+
                     {/* Stock Preset Selector */}
                     <div style={{ marginBottom: '16px' }}>
                       <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block', marginBottom: '6px' }}>Or pick from luxury Dubai image presets:</span>
@@ -885,15 +1004,39 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
               </div>
 
               <div className="admin-modal-footer">
-                <button type="button" className="btn-admin-secondary" onClick={() => setIsModalOpen(false)}>
+                <button 
+                  type="button" 
+                  className="btn-admin-secondary" 
+                  disabled={isSaving} 
+                  onClick={() => setIsModalOpen(false)}
+                >
                   Cancel
                 </button>
+<<<<<<< HEAD
                 <button type="submit" className="btn-admin-primary" disabled={isSaving}>
                   {isSaving ? (
                     <><RefreshCw size={16} className="spin-icon" /> Saving...</>
                   ) : (
                     <><CheckCircle size={16} />
                     {modalMode === 'create' ? 'Publish Project' : 'Save Changes'}</>
+=======
+                <button 
+                  type="submit" 
+                  className="btn-admin-primary" 
+                  disabled={isSaving}
+                  style={{ opacity: isSaving ? 0.85 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSaving ? (
+                    <>
+                      <RefreshCw size={16} className="spin" />
+                      <span>{modalMode === 'create' ? 'Publishing Project...' : 'Saving Changes...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={16} />
+                      <span>{modalMode === 'create' ? 'Publish Project' : 'Save Changes'}</span>
+                    </>
+>>>>>>> 13326402ec04d2bda2b2badd46fd6810bc67193b
                   )}
                 </button>
               </div>
@@ -925,6 +1068,135 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
               </button>
               <button className="btn-card-action btn-card-delete" style={{ padding: '10px 20px', fontSize: '14px' }} onClick={handleDeleteConfirm}>
                 Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── WORDPRESS MEDIA GALLERY BROWSER MODAL ── */}
+      {isGalleryModalOpen && (
+        <div className="admin-modal-backdrop" onClick={() => setIsGalleryModalOpen(false)}>
+          <div className="admin-modal" style={{ maxWidth: '840px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h2 className="admin-modal-title">
+                <ImageIcon size={20} style={{ color: 'var(--c-gold)' }} /> WordPress Media Library Gallery
+              </h2>
+              <button className="admin-modal-close" onClick={() => setIsGalleryModalOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="admin-modal-body" style={{ maxHeight: '65vh', overflowY: 'auto', padding: '20px' }}>
+              <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
+                All photos stored in your WordPress Media Gallery (<code>https://akv.intelloft.in</code>). Click any photo to attach it to this project:
+              </p>
+
+              {isLoadingGallery ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '50px 0', gap: '12px' }}>
+                  <RefreshCw size={28} className="spin" style={{ color: 'var(--c-gold)' }} />
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>Loading WordPress Media Library...</span>
+                </div>
+              ) : wpGallery.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                  No images found in WordPress gallery.
+                </div>
+              ) : (
+                <div className="wp-gallery-grid">
+                  {wpGallery.map((item) => {
+                    const isAlreadySelected = formData.images.includes(item.url);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`wp-gallery-item ${isAlreadySelected ? 'selected' : ''}`}
+                        onClick={() => handleSelectFromWpGallery(item.url)}
+                        title={item.title || item.url}
+                      >
+                        <img src={item.thumbnail || item.url} alt={item.title} loading="lazy" />
+                        {isAlreadySelected && (
+                          <div className="wp-gallery-item-badge">
+                            <CheckCircle size={13} /> Added
+                          </div>
+                        )}
+                        <div className="wp-gallery-item-title">{item.title}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="admin-modal-footer">
+              <button className="btn-admin-primary" onClick={() => setIsGalleryModalOpen(false)}>
+                Done Selecting
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PROJECT SAVED & PUBLISHED SUCCESS MODAL ── */}
+      {savedSuccessProject && (
+        <div className="admin-modal-overlay" onClick={() => setSavedSuccessProject(null)}>
+          <div 
+            className="admin-modal admin-success-modal" 
+            style={{ maxWidth: '520px', textAlign: 'center' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="admin-success-icon-wrap">
+              <Check size={38} className="admin-success-check" strokeWidth={2.5} />
+            </div>
+
+            <h2 className="admin-success-title">Project Successfully Saved!</h2>
+            <p className="admin-success-subtitle">
+              <strong>{savedSuccessProject.name}</strong> has been saved and published. Visitors can now view the full details, amenities, pricing, and PDF brochure on the live website.
+            </p>
+
+            {/* Mini preview card */}
+            <div className="admin-success-preview">
+              <img 
+                src={savedSuccessProject.img || (savedSuccessProject.images && savedSuccessProject.images[0])} 
+                alt={savedSuccessProject.name}
+                className="admin-success-preview-img" 
+              />
+              <div className="admin-success-preview-body">
+                <span className="admin-success-badge">{savedSuccessProject.developer || 'Off-Plan'}</span>
+                <h4 className="admin-success-pname">{savedSuccessProject.name}</h4>
+                <div className="admin-success-pmeta">
+                  <span><MapPin size={12} /> {savedSuccessProject.location}</span>
+                  <span>•</span>
+                  <span>{savedSuccessProject.beds} Beds</span>
+                </div>
+                <div className="admin-success-pprice">{savedSuccessProject.price}</div>
+              </div>
+            </div>
+
+            <div className="admin-success-actions">
+              <button 
+                className="btn-admin-primary btn-view-live"
+                onClick={() => {
+                  const pid = savedSuccessProject.id;
+                  setSavedSuccessProject(null);
+                  onNavigate('property', pid);
+                }}
+              >
+                <ExternalLink size={17} /> View Project on Live Website
+              </button>
+
+              <button 
+                className="btn-admin-secondary"
+                style={{ justifyContent: 'center', padding: '11px 20px', fontSize: '14px' }}
+                onClick={() => {
+                  setSavedSuccessProject(null);
+                  onNavigate('listings');
+                }}
+              >
+                View in All Listings
+              </button>
+
+              <button 
+                className="btn-admin-link"
+                onClick={() => setSavedSuccessProject(null)}
+              >
+                Stay in Admin Dashboard
               </button>
             </div>
           </div>

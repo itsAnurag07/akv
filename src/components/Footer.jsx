@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { resolveImageUrl } from '../utils/wpMedia';
 
 export default function GlobalFooter({ navigate, setListingTab, setFilterType }) {
   const handleNav = (page) => {
@@ -17,7 +18,7 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
       <div className="footer-top">
         <div className="footer-brand">
           <img
-            src="images/AKV final logo.png"
+            src={resolveImageUrl('images/AKV final logo.png')}
             alt="AKV Global"
             style={{ height: '48px', width: 'auto', objectFit: 'contain', marginBottom: '20px', display: 'block' }}
           />
