@@ -14,7 +14,7 @@ import {
   Plus, Edit3, Trash2, Search, Building2, MapPin,
   Image as ImageIcon, UploadCloud, X, CheckCircle,
   RefreshCw, LayoutGrid, List, ArrowLeft, LogOut,
-  FileText, ExternalLink, Eye, Check
+  FileText, ExternalLink, Eye, Check, Copy
 } from 'lucide-react';
 import {
   uploadImageToWordPress,
@@ -84,13 +84,10 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
     desc: '',
     amenities: 'Lagoon Access, Swimming Pool, Fitness Center, 24/7 Security, Valet Parking',
     imgUrlInput: '',
-    images: [],
-    pdfUrl: '',
-    pdfName: ''
+    images: []
   });
 
   const fileInputRef = useRef(null);
-  const pdfInputRef = useRef(null);
 
   // Load project list on mount
   useEffect(() => {
@@ -137,9 +134,7 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
       desc: 'Exclusive luxury off-plan development with state-of-the-art amenities and prime location in Dubai.',
       amenities: 'Infinity Pool, Private Beach, Concierge, Valet Parking, Spa & Gym',
       imgUrlInput: '',
-      images: ['images/offplan.png', 'images/penthouse.png'],
-      pdfUrl: '',
-      pdfName: ''
+      images: ['images/offplan.png', 'images/penthouse.png']
     });
     setModalMode('create');
     setEditingId(null);
@@ -163,9 +158,7 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
       desc: project.desc || '',
       amenities: Array.isArray(project.amenities) ? project.amenities.join(', ') : (project.amenities || ''),
       imgUrlInput: '',
-      images: project.images && project.images.length > 0 ? project.images : [project.img || 'images/offplan.png'],
-      pdfUrl: project.pdfUrl || '',
-      pdfName: project.pdfName || ''
+      images: project.images && project.images.length > 0 ? project.images : [project.img || 'images/offplan.png']
     });
     setEditingId(project.id);
     setModalMode('edit');
@@ -178,10 +171,11 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
     if (!files.length) return;
 
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    const pdfFiles = files.filter(file => file.type === 'application/pdf' || file.name.endsWith('.pdf'));
-
-    // Handle PDF brochures
-    pdfFiles.forEach(file => handlePdfUploadFile(file));
+    if (!imageFiles.length) {
+      showToast('Please select valid image files (JPG, PNG, WEBP).');
+      if (e.target) e.target.value = '';
+      return;
+    }
 
     // Upload images directly to WordPress Media Gallery
     if (imageFiles.length > 0) {
@@ -244,21 +238,6 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
     } else {
       showToast('Image is already selected in project gallery.');
     }
-  };
-
-  // Dedicated PDF Brochure Upload Handler
-  const handlePdfUploadFile = (file) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setFormData(prev => ({
-        ...prev,
-        pdfUrl: event.target.result,
-        pdfName: file.name
-      }));
-      showToast(`Attached brochure PDF: "${file.name}"`);
-    };
-    reader.readAsDataURL(file);
   };
 
   // Handle Add Image URL Input
@@ -340,9 +319,7 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
         amenities: amenitiesArray,
         img: finalImages[0],
         images: finalImages,
-        community: formData.location.trim(),
-        pdfUrl: formData.pdfUrl || '',
-        pdfName: formData.pdfName || ''
+        community: formData.location.trim()
       };
 
       let savedItem = null;
@@ -368,10 +345,67 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
       setSavedSuccessProject(savedItem);
     } catch (err) {
       console.error('Save failed:', err);
-      showToast(`Save failed: ${err.message}. Try reducing image/PDF sizes.`);
+      showToast(`Save failed: ${err.message}.`);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Duplicate an existing project directly from card/table
+  const handleDuplicateProject = async (project) => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      showToast(`Creating a copy of "${project.name}"...`);
+      const finalDeveloper = project.developer || 'Leading Developer';
+      const amenitiesArray = Array.isArray(project.amenities)
+        ? project.amenities
+        : (project.amenities ? project.amenities.split(',').map(a => a.trim()).filter(Boolean) : []);
+      const finalImages = project.images && project.images.length > 0
+        ? [...project.images]
+        : [resolveImageUrl(project.img || 'images/offplan.png')];
+
+      const copyPayload = {
+        name: `${project.name} (Copy)`,
+        developer: finalDeveloper,
+        location: project.location,
+        price: project.price,
+        paymentPlan: project.paymentPlan,
+        completion: project.completion,
+        category: project.category || 'Apartment',
+        type: project.type || `Off-Plan ${project.category || 'Apartment'}`,
+        beds: Number(project.beds) || 2,
+        baths: Number(project.baths) || 2,
+        area: String(project.area || '1,200'),
+        desc: project.desc || '',
+        amenities: amenitiesArray,
+        img: finalImages[0],
+        images: finalImages,
+        community: project.community || project.location
+      };
+
+      const updatedList = await addOffPlanProject(copyPayload);
+      const finalList = Array.isArray(updatedList) ? updatedList : getOffPlanProjects();
+      setProjects(finalList);
+      if (onProjectsChange) onProjectsChange(finalList);
+      showToast(`Duplicated: "${copyPayload.name}" successfully!`);
+    } catch (err) {
+      console.error('Duplicate failed:', err);
+      showToast(`Failed to duplicate: ${err.message}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Duplicate current project being edited in modal
+  const handleDuplicateFromModal = () => {
+    setModalMode('create');
+    setEditingId(null);
+    setFormData(prev => ({
+      ...prev,
+      name: prev.name.includes('(Copy)') ? prev.name : `${prev.name} (Copy)`
+    }));
+    showToast('Switched to copy mode. Adjust details and click "Publish Project".');
   };
 
   // Delete Project Execution
@@ -563,10 +597,13 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                     >
                       <Eye size={14} /> View Live
                     </button>
-                    <button className="btn-card-action btn-card-edit" onClick={() => handleOpenEditModal(p)}>
+                    <button className="btn-card-action btn-card-edit" onClick={() => handleOpenEditModal(p)} title="Edit project">
                       <Edit3 size={14} /> Edit
                     </button>
-                    <button className="btn-card-action btn-card-delete" onClick={() => setDeleteConfirmId(p.id)}>
+                    <button className="btn-card-action btn-card-copy" onClick={() => handleDuplicateProject(p)} title="Duplicate project / Make a copy">
+                      <Copy size={14} /> Copy
+                    </button>
+                    <button className="btn-card-action btn-card-delete" onClick={() => setDeleteConfirmId(p.id)} title="Delete project">
                       <Trash2 size={14} /> Delete
                     </button>
                   </div>
@@ -627,10 +664,13 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                         >
                           <Eye size={13} /> View Live
                         </button>
-                        <button className="btn-card-action btn-card-edit" style={{ padding: '6px 12px' }} onClick={() => handleOpenEditModal(p)}>
+                        <button className="btn-card-action btn-card-edit" style={{ padding: '6px 12px' }} onClick={() => handleOpenEditModal(p)} title="Edit project">
                           <Edit3 size={14} /> Edit
                         </button>
-                        <button className="btn-card-action btn-card-delete" style={{ padding: '6px 12px' }} onClick={() => setDeleteConfirmId(p.id)}>
+                        <button className="btn-card-action btn-card-copy" style={{ padding: '6px 12px' }} onClick={() => handleDuplicateProject(p)} title="Duplicate project / Make a copy">
+                          <Copy size={13} /> Copy
+                        </button>
+                        <button className="btn-card-action btn-card-delete" style={{ padding: '6px 12px' }} onClick={() => setDeleteConfirmId(p.id)} title="Delete project">
                           <Trash2 size={14} /> Delete
                         </button>
                       </div>
@@ -827,18 +867,18 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                       <ImageIcon size={18} /> Project Image Assets & Gallery
                     </label>
 
-                    {/* File Upload Zone (Images & PDF Document) */}
+                    {/* File Upload Zone (Images) */}
                     <div className="image-upload-zone" onClick={() => fileInputRef.current?.click()}>
                       <UploadCloud size={36} className="upload-icon" />
-                      <div className="upload-text-main">Click or Drag &amp; Drop Image Files or PDF Brochures</div>
+                      <div className="upload-text-main">Click or Drag &amp; Drop Project Images</div>
                       <div className="upload-text-sub">
-                        Upload project photo assets (JPG, PNG, WEBP) or attach a PDF brochure for visitors to download.
+                        Upload project photo assets (JPG, PNG, WEBP) directly to WordPress Media Gallery.
                       </div>
                       <input
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
-                        accept="image/*,application/pdf"
+                        accept="image/*"
                         multiple
                         style={{ display: 'none' }}
                       />
@@ -854,69 +894,6 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                         </div>
                       </div>
                     )}
-
-                    {/* PDF Brochure Attachment Section */}
-                    <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', marginBottom: '20px' }}>
-                      <label className="admin-label" style={{ fontSize: '14px', color: 'var(--c-gold)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                        <FileText size={16} /> Project Official PDF Brochure &amp; Floor Plan
-                      </label>
-                      <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 12px 0' }}>
-                        Upload a PDF document (Brochure, Floorplan, or Factsheet) for visitors to view online or download on the property page.
-                      </p>
-
-                      {formData.pdfUrl ? (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(197,160,89,0.15)', border: '1px solid var(--c-gold)', borderRadius: '8px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#fff', fontSize: '13px' }}>
-                            <FileText size={22} style={{ color: 'var(--c-gold)' }} />
-                            <div>
-                              <div style={{ fontWeight: 600, color: '#fff' }}>{formData.pdfName || 'Official Project Brochure.pdf'}</div>
-                              <div style={{ fontSize: '11px', color: 'var(--c-gold)', marginTop: '2px' }}>✓ PDF Attached • Live Download Available on Property Page</div>
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <a
-                              href={formData.pdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn-admin-secondary"
-                              style={{ padding: '6px 12px', fontSize: '12px' }}
-                            >
-                              Preview PDF
-                            </a>
-                            <button
-                              type="button"
-                              className="btn-admin-secondary"
-                              style={{ padding: '6px 12px', fontSize: '12px', borderColor: 'rgba(239,68,68,0.4)', color: '#f87171' }}
-                              onClick={() => setFormData(prev => ({ ...prev, pdfUrl: '', pdfName: '' }))}
-                            >
-                              Remove PDF
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                          <button
-                            type="button"
-                            className="btn-admin-secondary"
-                            onClick={() => pdfInputRef.current?.click()}
-                            style={{ borderColor: 'var(--c-gold)', color: 'var(--c-gold)' }}
-                          >
-                            <FileText size={15} /> Select &amp; Upload PDF Brochure
-                          </button>
-                          <span style={{ fontSize: '12px', color: '#64748b' }}>No PDF attached yet</span>
-                          <input
-                            type="file"
-                            ref={pdfInputRef}
-                            onChange={(e) => {
-                              const file = e.target.files && e.target.files[0];
-                              if (file) handlePdfUploadFile(file);
-                            }}
-                            accept="application/pdf"
-                            style={{ display: 'none' }}
-                          />
-                        </div>
-                      )}
-                    </div>
 
                     {/* Image URL Direct Input */}
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
@@ -1012,14 +989,18 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                 >
                   Cancel
                 </button>
-<<<<<<< HEAD
-                <button type="submit" className="btn-admin-primary" disabled={isSaving}>
-                  {isSaving ? (
-                    <><RefreshCw size={16} className="spin-icon" /> Saving...</>
-                  ) : (
-                    <><CheckCircle size={16} />
-                    {modalMode === 'create' ? 'Publish Project' : 'Save Changes'}</>
-=======
+                {modalMode === 'edit' && (
+                  <button 
+                    type="button" 
+                    className="btn-admin-secondary" 
+                    disabled={isSaving} 
+                    onClick={handleDuplicateFromModal}
+                    style={{ borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    title="Switch to creating a duplicate copy from these values"
+                  >
+                    <Copy size={15} /> Make a Copy
+                  </button>
+                )}
                 <button 
                   type="submit" 
                   className="btn-admin-primary" 
@@ -1036,7 +1017,6 @@ export default function AdminDashboard({ onNavigate, onLogout, onProjectsChange 
                       <CheckCircle size={16} />
                       <span>{modalMode === 'create' ? 'Publish Project' : 'Save Changes'}</span>
                     </>
->>>>>>> 13326402ec04d2bda2b2badd46fd6810bc67193b
                   )}
                 </button>
               </div>
