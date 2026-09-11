@@ -2028,10 +2028,20 @@ footer {
   flex-shrink: 0;
 }
 
-.footer-contact-item span {
+.footer-contact-item span,
+.footer-contact-item a,
+.footer-contact-link {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.65) !important;
   line-height: 1.5;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-block;
+}
+
+.footer-contact-item a:hover,
+.footer-contact-link:hover {
+  color: var(--c-gold) !important;
 }
 
 .footer-bottom {
