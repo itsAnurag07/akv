@@ -4127,26 +4127,35 @@ select option {
 
 .ab2-pillars-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .ab2-pillars-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .ab2-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 540px) {
   .ab2-pillars-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
 .ab2-pillar-card {
   background: #ffffff;
   border-radius: 18px;
-  padding: 36px 28px;
+  padding: 30px 22px;
   border: 1px solid var(--c-border);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   transition: all 0.35s var(--ease-out);

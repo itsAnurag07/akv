@@ -162,6 +162,12 @@ export default function AboutPage({ onNavigate }) {
       title: 'Client Stewardship',
       desc: 'Discreet private client care for HNW families and institutional investors — managing your property portfolio end-to-end with total transparency.',
       icon: <Briefcase size={24} />
+    },
+    {
+      num: '',
+      title: 'Trust and Vision',
+      desc: 'Building enduring client relationships rooted in complete transparency, fiduciary integrity, and forward-looking wealth preservation.',
+      icon: <Shield size={24} />
     }
   ];
 
@@ -204,35 +210,29 @@ export default function AboutPage({ onNavigate }) {
                 </div>
                 <div className="ab2-trust-item">
                   <CheckCircle size={16} className="ab2-check-gold" />
-                  <span>AED 10B+ Transaction Record</span>
+                  <span>C-Suite Direct Access</span>
                 </div>
                 <div className="ab2-trust-item">
                   <CheckCircle size={16} className="ab2-check-gold" />
-                  <span>Boutique Private Office Advisory</span>
+                  <span>0% Advisory Retainer</span>
                 </div>
               </div>
             </div>
 
             <div className="ab2-hero-visual">
+              <div className="ab2-hero-card-glow" />
               <div className="ab2-hero-frame">
                 <img
-                  src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80"
-                  alt="Dubai Luxury Skyline Architecture"
+                  src={resolveImageUrl('images/penthouse.png')}
+                  alt="Dubai Luxury Architecture"
                   className="ab2-hero-img"
                 />
-                <div className="ab2-hero-glass-card">
-                  <Award size={32} className="ab2-gold-icon" />
+                <div className="ab2-hero-img-badge">
+                  <Award size={18} className="text-gold" />
                   <div>
-                    <div className="ab2-glass-title">Dubai's #1 Luxury Advisory</div>
-                    <div className="ab2-glass-sub">Assist · Knowledge · Vision Philosophy</div>
+                    <strong>Top 1% Tier</strong>
+                    <span>Private Client Advisory</span>
                   </div>
-                </div>
-
-                <div className="ab2-hero-stat-floating">
-                  <span className="ab2-float-num">
-                    <CountUpNumber end={100} suffix="%" />
-                  </span>
-                  <span className="ab2-float-txt">Client Focused Excellence</span>
                 </div>
               </div>
             </div>
@@ -240,32 +240,30 @@ export default function AboutPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* ── METRICS COUNTER BAR ── */}
+      {/* ── METRICS STRIP ── */}
       <section className="ab2-stats-strip">
         <div className="container">
           <div className="ab2-stats-grid">
             <div className="ab2-stat-box">
               <div className="ab2-stat-number">
-                <CountUpNumber end={10} prefix="AED " suffix="B+" />
+                <CountUpNumber end={4.8} decimals={1} prefix="AED " suffix="B+" />
               </div>
-              <div className="ab2-stat-label">Total Transaction Volume</div>
+              <div className="ab2-stat-label">Transactions Advised</div>
             </div>
             <div className="ab2-stat-box">
               <div className="ab2-stat-number">
-                <CountUpNumber end={500} suffix="+" />
+                <CountUpNumber end={1200} suffix="+" />
               </div>
-              <div className="ab2-stat-label">Satisfied Global Investors</div>
+              <div className="ab2-stat-label">HNW Families Guided</div>
             </div>
             <div className="ab2-stat-box">
               <div className="ab2-stat-number">
-                <CountUpNumber end={99.2} decimals={1} suffix="%" />
+                <CountUpNumber end={14} suffix="+" />
               </div>
-              <div className="ab2-stat-label">Client Retention &amp; Referral</div>
+              <div className="ab2-stat-label">Years Leadership</div>
             </div>
             <div className="ab2-stat-box">
-              <div className="ab2-stat-number">
-                <CountUpNumber end={100} suffix="%" />
-              </div>
+              <div className="ab2-stat-number">100%</div>
               <div className="ab2-stat-label">Transparent RERA Compliance</div>
             </div>
           </div>
@@ -280,7 +278,7 @@ export default function AboutPage({ onNavigate }) {
               <div className="ab2-vision-image-col">
                 <div className="ab2-founder-portrait-wrap">
                   <img
-                    src="images/Paramdeep_new.png"
+                    src={resolveImageUrl('images/Paramdeep_new.png')}
                     alt="Paramdeep Singh Co-Founder"
                     className="ab2-founder-img"
                   />
@@ -319,7 +317,7 @@ export default function AboutPage({ onNavigate }) {
         <div className="container">
           <div className="ab2-header-center">
             <div className="label mb-12">Our Foundation</div>
-            <h2 className="section-heading">The Four Pillars of AKV Advisory</h2>
+            <h2 className="section-heading">The Five Pillars of AKV Advisory</h2>
             <p className="section-sub">Engineered to protect your capital and maximize returns across Dubai property cycles</p>
           </div>
 
