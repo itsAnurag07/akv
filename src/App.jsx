@@ -623,7 +623,7 @@ function App() {
     let filtered = PROPERTIES;
 
     // Filter by Search Tabs
-    if (listingTab === 'Buy' || listingTab === 'Rent') {
+    if (listingTab === 'Buy') {
       filtered = PROPERTIES.filter(p => !p.offplan);
     } else if (listingTab === 'Off-Plan') {
       filtered = offPlanProjects;
@@ -728,10 +728,6 @@ function App() {
             <span>Buy</span>
             <ChevronRight size={18} className="mobile-link-arrow" />
           </span>
-          <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); setListingTab('Rent'); navigate('listings'); }}>
-            <span>Rent</span>
-            <ChevronRight size={18} className="mobile-link-arrow" />
-          </span>
           <span className="mobile-nav-link" onClick={() => { setIsMobileMenuOpen(false); setListingTab('Off-Plan'); navigate('listings'); }}>
             <span>Off-Plan</span>
             <ChevronRight size={18} className="mobile-link-arrow" />
@@ -785,7 +781,6 @@ function App() {
                 {/* Tabs inside capsule */}
                 <div className="search-widget-tabs">
                   <button className={`search-widget-tab ${heroTab === 'Buy' ? 'active' : ''}`} onClick={() => setHeroTab('Buy')}>Buy</button>
-                  <button className={`search-widget-tab ${heroTab === 'Rent' ? 'active' : ''}`} onClick={() => setHeroTab('Rent')}>Rent</button>
                   <button className={`search-widget-tab ${heroTab === 'Off-Plan' ? 'active' : ''}`} onClick={() => setHeroTab('Off-Plan')}>Off Plan</button>
                 </div>
 
@@ -898,7 +893,7 @@ function App() {
 
               {/* Categories filter tabs */}
               <div className="properties-category-tabs">
-                {['All', 'Rent', 'Villa', 'Apartment', 'Penthouse', 'Townhouse'].map(tab => (
+                {['All', 'Villa', 'Apartment', 'Penthouse', 'Townhouse'].map(tab => (
                   <button
                     key={tab}
                     className={`prop-cat-tab ${featuredFilter === tab ? 'active' : ''}`}
@@ -911,9 +906,6 @@ function App() {
 
               <div className="properties-grid" id="featured-grid">
                 {PROPERTIES.filter(p => {
-                  if (featuredFilter === 'Rent') {
-                    return p.type.toLowerCase().includes('rent') || p.price.toLowerCase().includes('month') || p.price.toLowerCase().includes('year');
-                  }
                   if (featuredFilter !== 'All') {
                     return p.type.toLowerCase().includes(featuredFilter.toLowerCase()) && !p.type.toLowerCase().includes('rent');
                   }
@@ -1183,7 +1175,7 @@ function App() {
           <div className="listing-filters-bar">
             <div className="container" style={{ padding: '0 40px' }}>
               <div className="filters-tabs">
-                {['All', 'Buy', 'Rent', 'Off-Plan'].map(tab => (
+                {['All', 'Buy', 'Off-Plan'].map(tab => (
                   <div
                     key={tab}
                     className={`filter-tab ${listingTab === tab ? 'active' : ''}`}

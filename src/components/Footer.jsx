@@ -56,7 +56,6 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
           <h4>Properties</h4>
           <div className="footer-links">
             <span className="footer-link" onClick={() => handleListingFilter('Buy')}>Buy</span>
-            <span className="footer-link" onClick={() => handleListingFilter('Rent')}>Rent</span>
             <span className="footer-link" onClick={() => handleListingFilter('Off-Plan')}>Off-Plan</span>
             <span className="footer-link" onClick={() => handleListingFilter('All')}>Featured Properties</span>
           </div>
