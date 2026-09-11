@@ -81,7 +81,13 @@ export default function GlobalFooter({ navigate, setListingTab, setFilterType })
 
         <div className="footer-col" id="contact">
           <h4>Contact &amp; Offices</h4>
-          <div className="footer-contact-item"><span className="fi"><Phone size={13} strokeWidth={2} /></span><span>+91 70090 66676</span></div>
+          <div className="footer-contact-item" style={{ alignItems: 'flex-start' }}>
+            <span className="fi" style={{ marginTop: '3px' }}><Phone size={13} strokeWidth={2} /></span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              <a href="tel:+917009066676" style={{ color: 'inherit', textDecoration: 'none' }}>+91 70090 66676</a>
+              <a href="tel:+919872670002" style={{ color: 'inherit', textDecoration: 'none' }}>+91 98726 70002</a>
+            </div>
+          </div>
           <div className="footer-contact-item"><span className="fi"><Mail size={13} strokeWidth={2} /></span><span>info@akvglobal.ae</span></div>
           <div className="footer-contact-item" style={{ alignItems: 'flex-start' }}>
             <span className="fi" style={{ marginTop: '3px' }}><MapPin size={13} strokeWidth={2} /></span>
